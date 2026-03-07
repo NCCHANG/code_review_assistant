@@ -3,11 +3,10 @@ import pandas as pd
 import re
 from datasets import load_dataset
 
-# --- LOGIC INJECTORS (The Smart Saboteurs) ---
+# Functions of sabotaging dataset
 
 def bug_logic_operator(code):
     """Swaps math operators to break logic (e.g., + becomes -)"""
-    # Expanded to handle flexible spacing (x+1 vs x + 1)
     swaps = {
         r'\+': '-', 
         r'-': '+', 
@@ -18,12 +17,10 @@ def bug_logic_operator(code):
         r'==': '!=',
     }
     
-    # Check which operators are present
-    # We look for the operator symbol, preserving surrounding text implies we just find it
+    # Check which operators are present in the in the code.
+    # \s* preserves surrounding whitespace to avoid merging tokens (e.g., "x+1" -> "x - 1" instead of "x-1").
     found_ops = []
     for op_pat in swaps.keys():
-        # Match operator allowing for surrounding spaces, ensuring we don't match inside words if possible
-        # For symbols, usually safe. \s* handles 0 or more spaces.
         pat = r'\s*' + op_pat + r'\s*'
         if re.search(pat, code):
             found_ops.append((pat, swaps[op_pat]))
@@ -32,8 +29,8 @@ def bug_logic_operator(code):
         return code
         
     target_pattern, replacement = random.choice(found_ops)
-    
-    # Replace with padded operator to ensure safety (x+1 -> x - 1)
+
+    # Use re.sub to replace only the first occurrence of the target pattern with the replacement, preserving whitespace.
     return re.sub(target_pattern, f" {replacement} ", code, count=1)
 
 def bug_logic_boolean(code):
@@ -108,14 +105,12 @@ if __name__ == "__main__":
     print("--- 1. LOADING FULL DATASET ---")
     print("This might take a few minutes because we are downloading ~1GB of data.")
 
-    # CHANGED: We removed "[:1%]" so it loads EVERYTHING.
+    # "[:1%]" loads EVERYTHING.
     # 'split="train"' means "give me all training data".
     try:
-        # Switched to claudios/code_search_net to avoid "dataset scripts not supported" error
         dataset = load_dataset("claudios/code_search_net", split="train")
     except Exception as e:
         print("Standard load failed, trying specific Python config...")
-        dataset = load_dataset("claudios/code_search_net", "python", split="train")
 
     # Filter for Python just to be safe (though the config usually handles it)
     # We use a simple filter to ensure we only get Python code
@@ -128,8 +123,6 @@ if __name__ == "__main__":
     synthetic_pairs = []
     bug_generators = [bug_logic_operator, bug_logic_boolean, bug_logic_off_by_one, bug_logic_variable_swap, bug_wrong_method, bug_missing_return, bug_logic_and_or]
 
-    # We will process in batches so your computer doesn't freeze
-    # Let's target 100,000 samples for a solid FYP (400k might be too slow to train on a laptop)
     TARGET_SIZE = 100000 
     print(f"Targeting {TARGET_SIZE} samples for your FYP...")
 
@@ -144,10 +137,14 @@ if __name__ == "__main__":
         injector = random.choice(bug_generators)
         buggy_code = injector(original_code)
         
+        # Extract intention from function docstring (optional context)
+        intention = example.get('func_documentation_string', '') or ''
+        
         if buggy_code != original_code:
             synthetic_pairs.append({
                 'buggy_code': buggy_code, 
-                'fixed_code': original_code
+                'fixed_code': original_code,
+                'intention': intention
             })
             count += 1
             

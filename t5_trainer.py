@@ -50,7 +50,23 @@ max_target_length = 128
 
 def preprocess_function(examples):
     # Add prefix "fix: " to assist the model (common T5 practice)
-    inputs = ["fix: " + str(code) for code in examples["input_text"]]
+    # If intention is available, include it as context
+    inputs = []
+    has_intention = "intention" in examples
+    for i in range(len(examples["input_text"])):
+        code = examples["input_text"][i]
+
+        if has_intention:
+            intention = examples["intention"][i]
+        else:
+            intention = ""
+        
+        # Check if intention is valid (not None or nan)
+        if pd.isna(intention) or not str(intention).strip():
+            inputs.append("fix: " + str(code))
+        else:
+            inputs.append(f"fix intent: {str(intention).strip()} code: {str(code)}")
+            
     targets = [str(code) for code in examples["target_text"]]
     
     model_inputs = tokenizer(inputs, max_length=max_input_length, padding="max_length", truncation=True)

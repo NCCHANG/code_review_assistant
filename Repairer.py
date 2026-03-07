@@ -25,9 +25,12 @@ except Exception as e:
     print(f"Error loading model: {e}")
     sys.exit(1)
 
-def fix_bug(buggy_code):
+def fix_bug(buggy_code, intention=""):
     # Prefix as used in training
-    input_text = "fix: " + buggy_code
+    if intention != "":
+        input_text = f"fix intent: {str(intention).strip()} code: {buggy_code}"
+    else:
+        input_text = "fix: " + buggy_code
     
     # Tokenize
     inputs = tokenizer(input_text, return_tensors="pt").input_ids
