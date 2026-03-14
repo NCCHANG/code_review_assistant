@@ -118,7 +118,7 @@ if __name__ == "__main__":
     print(f"SUCCESS: Loaded {len(dataset)} real Python functions.")
     print("Now generating synthetic bugs for ALL of them. This will take time...")
 
-    # --- 3. GENERATE MASSIVE DATASET ---
+    # GENERATE A MASSIVE DATASET
     synthetic_pairs = []
     bug_generators = [bug_logic_operator, bug_logic_boolean, bug_logic_off_by_one, bug_logic_variable_swap, bug_wrong_method, bug_missing_return, bug_logic_and_or]
 
@@ -132,21 +132,21 @@ if __name__ == "__main__":
         
         # Strip docstrings from the code
         try:
-            # Turn warnings into errors so code with invalid escape sequences gets skipped!
+            # Turn warnings into errors so code with invalid escape sequences gets skipped
             with warnings.catch_warnings():
                 warnings.simplefilter("error", SyntaxWarning)
                 tree = ast.parse(original_code)
                 for node in tree.body:
                     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
                         if ast.get_docstring(node):
-                            # The first expression in the body is the docstring
+                            # remove the docstring (which is always the first statement in the body if it exists)
                             node.body.pop(0)
                             
                 # Unparse the tree back to source code (Python 3.9+)
                 original_code = ast.unparse(tree)
         except Exception:
             # If parsing throws an exception (SyntaxError) or a SyntaxWarning (promoted to error), 
-            # this sample will be discarded completely so the models only train on valid Modern Python!
+            # this sample will be discarded completely so the models only train on valid Modern Python
             continue
         
         # Skip very long or very short code (hard to learn)
@@ -167,7 +167,7 @@ if __name__ == "__main__":
         if count >= TARGET_SIZE:
             break
 
-    # --- 4. SAVE TO CSV ---
+    # SAVE TO CSV ---
     df = pd.DataFrame(synthetic_pairs)
     output_file = "synthetic_python_bugs.csv"
     df.to_csv(output_file, index=False)

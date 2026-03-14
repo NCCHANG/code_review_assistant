@@ -15,8 +15,8 @@ train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
 print(f"Train Pairs: {len(train_df)}")
 print(f"Test Pairs:  {len(test_df)}")
 
-# --- 3. PREPARE FOR RANDOM FOREST (Classifier) ---
-# Goal: Columns ['code_snippet', 'label'] (0 or 1)
+# PREPARE DATASET FOR CLASSIFIER
+# to have columns ['code_snippet', 'label'] where label is 1 for buggy and 0 for clean code
 
 def prepare_for_classifier(dataframe):
     # Take buggy one from dataset and label as 1
@@ -24,7 +24,7 @@ def prepare_for_classifier(dataframe):
     buggy.columns = ['code_snippet']
     buggy['label'] = 1
     
-    # Take non-buggy (safe) one from dataset and label as 1
+    # Take non-buggy one from dataset and label as 0
     fixed = dataframe[['fixed_code']].copy()
     fixed.columns = ['code_snippet']
     fixed['label'] = 0
@@ -43,10 +43,9 @@ rf_test.to_csv("rf_test_dataset.csv", index=False)
 print("\n[Random Forest] Created 'rf_train_dataset.csv' & 'rf_test_dataset.csv'")
 print(f"   - Training Samples: {len(rf_train)} (Half buggy, half clean)")
 
-# --- 4. PREPARE FOR CODET5 (Repairer) ---
+# NOW FOR CODET5................
 # Goal: Columns ['input_text', 'target_text']
-# We only want to teach it to fix BUGGY code. 
-# (We don't need to show it perfect code, it just needs to fix errors)
+# This is to make it treat code fixing as a translation task, where input is the buggy code and output is the fixed code.
 
 def prepare_for_codet5(dataframe):
     # Just rename columns to standard huggingface format
