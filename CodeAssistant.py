@@ -4,7 +4,7 @@ import ast
 
 # Import own components
 from Predictor import load_model as load_predictor, predict_bug
-from Repairer import fix_bug
+from real.Repairer import fix_bug
 
 def extract_functions(code):
     """Parses code and returns a list of (function_name, source_code) tuples."""

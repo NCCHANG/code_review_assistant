@@ -1,10 +1,12 @@
 import random
 import pandas as pd
 import re
+import sys
+import ast
+import warnings
 from datasets import load_dataset
 
-# Functions of sabotaging dataset
-
+# Functions to sabotaging dataset
 def bug_logic_operator(code):
     """Swaps math operators to break logic (e.g., + becomes -)"""
     swaps = {
@@ -108,18 +110,15 @@ if __name__ == "__main__":
     # "[:1%]" loads EVERYTHING.
     # 'split="train"' means "give me all training data".
     try:
-        dataset = load_dataset("claudios/code_search_net", split="train")
+        dataset = load_dataset("claudios/code_search_net", "python", split="train")
     except Exception as e:
-        print("Standard load failed, trying specific Python config...")
+        print("Standard load failed: ", e)
+        sys.exit(1)
 
-    # Filter for Python just to be safe (though the config usually handles it)
-    # We use a simple filter to ensure we only get Python code
-    python_data = dataset.filter(lambda x: x['language'] == 'python')
-
-    print(f"SUCCESS: Loaded {len(python_data)} real Python functions.")
+    print(f"SUCCESS: Loaded {len(dataset)} real Python functions.")
     print("Now generating synthetic bugs for ALL of them. This will take time...")
 
-    # --- 3. GENERATE MASSIVE DATASET ---
+    # GENERATE A MASSIVE DATASET
     synthetic_pairs = []
     bug_generators = [bug_logic_operator, bug_logic_boolean, bug_logic_off_by_one, bug_logic_variable_swap, bug_wrong_method, bug_missing_return, bug_logic_and_or]
 
@@ -127,8 +126,28 @@ if __name__ == "__main__":
     print(f"Targeting {TARGET_SIZE} samples for your FYP...")
 
     count = 0
-    for example in python_data:
+    for example in dataset:
         original_code = example['func_code_string']
+        intention = example.get('func_documentation_string', '') or ''
+        
+        # Strip docstrings from the code
+        try:
+            # Turn warnings into errors so code with invalid escape sequences gets skipped
+            with warnings.catch_warnings():
+                warnings.simplefilter("error", SyntaxWarning)
+                tree = ast.parse(original_code)
+                for node in tree.body:
+                    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                        if ast.get_docstring(node):
+                            # remove the docstring (which is always the first statement in the body if it exists)
+                            node.body.pop(0)
+                            
+                # Unparse the tree back to source code (Python 3.9+)
+                original_code = ast.unparse(tree)
+        except Exception:
+            # If parsing throws an exception (SyntaxError) or a SyntaxWarning (promoted to error), 
+            # this sample will be discarded completely so the models only train on valid Modern Python
+            continue
         
         # Skip very long or very short code (hard to learn)
         if len(original_code) > 512 or len(original_code) < 20:
@@ -136,9 +155,6 @@ if __name__ == "__main__":
             
         injector = random.choice(bug_generators)
         buggy_code = injector(original_code)
-        
-        # Extract intention from function docstring (optional context)
-        intention = example.get('func_documentation_string', '') or ''
         
         if buggy_code != original_code:
             synthetic_pairs.append({
@@ -151,7 +167,7 @@ if __name__ == "__main__":
         if count >= TARGET_SIZE:
             break
 
-    # --- 4. SAVE TO CSV ---
+    # SAVE TO CSV ---
     df = pd.DataFrame(synthetic_pairs)
     output_file = "synthetic_python_bugs.csv"
     df.to_csv(output_file, index=False)

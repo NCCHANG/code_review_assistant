@@ -5,23 +5,19 @@ import torch
 from transformers import RobertaTokenizer, T5ForConditionalGeneration, Seq2SeqTrainingArguments, Seq2SeqTrainer, DataCollatorForSeq2Seq
 from datasets import Dataset
 
-# Setup paths
+# path of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
-# Parent dir (training/)
-base_dir = os.path.dirname(script_dir)
-train_csv = os.path.join(base_dir, "t5_train_dataset.csv")
-test_csv = os.path.join(base_dir, "t5_test_dataset.csv")
-
-if not os.path.exists(train_csv):
-    print(f"Error: {train_csv} not found.")
-    sys.exit(1)
+# load dataset from the same directory
+train_csv = os.path.join(script_dir, "t5_train_dataset.csv")
+test_csv = os.path.join(script_dir, "t5_test_dataset.csv")
 
 print("Loading data...")
 try:
     train_df = pd.read_csv(train_csv)
     test_df = pd.read_csv(test_csv)
 except Exception as e:
-    print(f"Error loading CSVs: {e}")
+    print(f"Error loading datasets: {e}")
+    print("Please ensure the dataset CSV files are in the same directory as this script.")
     sys.exit(1)
 print("data loaded")
 
@@ -42,15 +38,15 @@ try:
     model = T5ForConditionalGeneration.from_pretrained(model_name)
 except Exception as e:
     print(f"Error loading model {model_name}: {e}")
-    print("Please ensure you have internet access to download the model.")
     sys.exit(1)
 
 max_input_length = 128
 max_target_length = 128
 
 def preprocess_function(examples):
+    """Every row in the dataset has an input code snippet and a target fixed code snippet. and every row will go through this function"""
     # Add prefix "fix: " to assist the model (common T5 practice)
-    # If intention is available, include it as context
+    # Check if intention is available, if so, include it as context
     inputs = []
     has_intention = "intention" in examples
     for i in range(len(examples["input_text"])):
@@ -61,7 +57,7 @@ def preprocess_function(examples):
         else:
             intention = ""
         
-        # Check if intention is valid (not None or nan)
+        # Check if intention is valid (not None or some bad value)
         if pd.isna(intention) or not str(intention).strip():
             inputs.append("fix: " + str(code))
         else:

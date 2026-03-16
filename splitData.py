@@ -1,46 +1,37 @@
 import pandas as pd
+import sys
 from sklearn.model_selection import train_test_split
 
-# 1. LOAD YOUR MASTER DATA
+# Load dataset
 try:
     df = pd.read_csv("synthetic_python_bugs.csv")
     print(f"Loaded Master Dataset: {len(df)} pairs")
 except FileNotFoundError:
-    # Fallback dummy data if you haven't run the previous script yet
-    print("Warning: 'synthetic_python_bugs.csv' not found. Creating dummy data.")
-    data = [
-        {"buggy_code": "def f(x): return x - 1", "fixed_code": "def f(x): return x + 1"},
-        {"buggy_code": "if x = 1:", "fixed_code": "if x == 1:"},
-        {"buggy_code": "print x", "fixed_code": "print(x)"},
-        {"buggy_code": "import nmp as np", "fixed_code": "import numpy as np"}
-    ] * 20 # duplicate to make it big enough to split
-    df = pd.DataFrame(data)
+    sys.exit(-1)
 
-# 2. SPLIT THE MASTER DATA FIRST (Crucial Step!)
-# We split the PAIRS. This ensures a specific bug never leaks from Train to Test.
+# Splitting dataset
 train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
 
-print(f"\nSplitting Master Data:")
 print(f"Train Pairs: {len(train_df)}")
 print(f"Test Pairs:  {len(test_df)}")
 
-# --- 3. PREPARE FOR RANDOM FOREST (Classifier) ---
-# Goal: Columns ['code_snippet', 'label'] (0 or 1)
+# PREPARE DATASET FOR CLASSIFIER
+# to have columns ['code_snippet', 'label'] where label is 1 for buggy and 0 for clean code
 
 def prepare_for_classifier(dataframe):
-    # Take the Buggy ones (Label 1)
+    # Take buggy one from dataset and label as 1
     buggy = dataframe[['buggy_code']].copy()
     buggy.columns = ['code_snippet']
     buggy['label'] = 1
     
-    # Take the Fixed ones (Label 0)
+    # Take non-buggy one from dataset and label as 0
     fixed = dataframe[['fixed_code']].copy()
     fixed.columns = ['code_snippet']
     fixed['label'] = 0
     
-    # Combine them
+    # Combine both safe and non safe
     combined = pd.concat([buggy, fixed])
-    # Shuffle them so 0s and 1s are mixed
+    # and shuffle
     return combined.sample(frac=1, random_state=42).reset_index(drop=True)
 
 rf_train = prepare_for_classifier(train_df)
@@ -52,10 +43,9 @@ rf_test.to_csv("rf_test_dataset.csv", index=False)
 print("\n[Random Forest] Created 'rf_train_dataset.csv' & 'rf_test_dataset.csv'")
 print(f"   - Training Samples: {len(rf_train)} (Half buggy, half clean)")
 
-# --- 4. PREPARE FOR CODET5 (Repairer) ---
+# NOW FOR CODET5................
 # Goal: Columns ['input_text', 'target_text']
-# We only want to teach it to fix BUGGY code. 
-# (We don't need to show it perfect code, it just needs to fix errors)
+# This is to make it treat code fixing as a translation task, where input is the buggy code and output is the fixed code.
 
 def prepare_for_codet5(dataframe):
     # Just rename columns to standard huggingface format
