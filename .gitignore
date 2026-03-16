@@ -2,3 +2,5 @@
 venv
 *.joblib
 *.csv
+real/results
+real/saved_model
