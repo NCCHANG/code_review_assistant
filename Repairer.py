@@ -3,18 +3,16 @@ import sys
 import torch
 from transformers import RobertaTokenizer, T5ForConditionalGeneration
 
-# Config
 script_dir = os.path.dirname(os.path.abspath(__file__))
-# Check if we have a trained model, else use base (for testing script logic)
+# use trained model else base model for testing
 trained_model_path = os.path.join(script_dir, "training", "t5", "saved_model")
 base_model_name = "Salesforce/codet5-base"
 
-# Determine which model to load
 if os.path.exists(trained_model_path):
     print(f"Loading Trained Model from: {trained_model_path}")
     load_path = trained_model_path
 else:
-    print(f"Trained model not found (Training in progress?).")
+    print(f"Trained model not found (saved_model).")
     print(f"Loading Base Model for testing: {base_model_name}")
     load_path = base_model_name
 
