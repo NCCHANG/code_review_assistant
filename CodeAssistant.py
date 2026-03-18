@@ -4,10 +4,10 @@ import ast
 
 # Import own components
 from Predictor import load_model as load_predictor, predict_bug
-from real.Repairer import fix_bug
+from Repairer import fix_bug
 
 def extract_functions(code):
-    """Parses code and returns a list of (function_name, source_code) tuples."""
+    """Parses code and returns a list of (function_name, source_code of function (def func ....) ) tuples."""
     try:
         tree = ast.parse(code)
     except SyntaxError:
@@ -15,14 +15,15 @@ def extract_functions(code):
         return []
         
     functions = []
-    for node in ast.walk(tree):
+    for node in ast.walk(tree): #walk through whole code tree to find all functions
         if isinstance(node, ast.FunctionDef):
-            # Get the source segment
             func_source = ast.get_source_segment(code, node)
             functions.append((node.name, func_source))
     return functions
 
 def process_file_or_input(user_input, model, vectorizer):
+    # ----------------------------------------------------------------
+    # EXTRACTING FUNCTIONS FROM FILE OR RAW CODE
     # Check if input is a file path
     if os.path.exists(user_input):
         try:
@@ -34,8 +35,7 @@ def process_file_or_input(user_input, model, vectorizer):
             print(f"Error reading file: {e}")
             return
     else:
-        # Treat as raw code
-        # Try to parse as functions, if failure (e.g. just a snippet), treat as one block
+        # Treat as raw code if not a file path
         functions = extract_functions(user_input)
         if not functions:
             functions = [("UserSnippet", user_input)]
@@ -45,11 +45,11 @@ def process_file_or_input(user_input, model, vectorizer):
         return
 
     print(f"\nAnalyzing {len(functions)} function(s)...\n")
-    
+    #--------------------------------------------------------------------
+    #PREDICT & REPAIR
     for func_name, func_code in functions:
         print(f"--- Checking: {func_name} ---")
         
-        # 1. PREDICT
         is_buggy, confidence = predict_bug(func_code, model, vectorizer, threshold=0.30)
         
         if is_buggy:
