@@ -2,6 +2,18 @@ import os
 import sys
 import torch
 from transformers import RobertaTokenizer, T5ForConditionalGeneration
+from openai import OpenAI
+from google import genai
+
+#Setting UP Grok OpenAI Client
+GROQ_KEY = "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" 
+groq_client = OpenAI(
+    api_key=GROQ_KEY,
+    base_url="https://api.groq.com/openai/v1"
+)
+#Setting up gemini GenAI Client
+GEMINI_KEY = "AIzaSyCdkseSms9ughYFLw0OswbW6P9_wg3Cy70"
+gemini_client = genai.Client(api_key=GEMINI_KEY)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 # use trained model else base model for testing
@@ -40,7 +52,47 @@ def fix_bug(buggy_code, intention=""):
     fixed_code = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return fixed_code
 
+def generate_feedback(buggy_code, fixed_code):
+    prompt = f"""
+    You are a Code Reviewer.
+    Buggy Code: {buggy_code}
+    Fixed Code: {fixed_code}
+    
+    Task:
+    1. Analysis: 1 sentence on the bug.
+    2. Reasoning: 1 or 2 sentences on the fix.
+    
+    Format:
+    Analysis: ...
+    Reasoning: ...
+    """
+
+    try:
+        response = gemini_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        return response.text.strip()
+    except Exception as e:
+        print(f"\n[!] Gemini Failed. Switching to Groq...")
+
+    try:
+        response = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant", 
+            messages=[
+                {"role": "system", "content": "You are a helpful code reviewer."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"\n[!] Groq Failed ({e}). Failed to generate feedback.")
+
 if __name__ == "__main__":
     code = "def add(a, b):\n    return a - b"
     fixed = fix_bug(code)
+    feedback = generate_feedback(code, fixed)
+    print("\n--- FEEDBACK ---")
+    print(feedback)
+    print("\n--- FIXED CODE ---")
     print(f"Fixed Code >> {fixed}")
