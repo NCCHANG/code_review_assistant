@@ -4,7 +4,7 @@ import ast
 
 # Import own components
 from Predictor import load_model as load_predictor, predict_bug
-from Repairer import fix_bug
+from Repairer import fix_bug , generate_feedback
 
 def extract_functions(code):
     """Parses code and returns a list of (function_name, source_code of function (def func ....) ) tuples."""
@@ -57,6 +57,8 @@ def process_file_or_input(user_input, model, vectorizer):
             print(f"  [ACTION]: Repairing...")
             try:
                 fixed_code = fix_bug(func_code)
+                feedback = generate_feedback(func_code, fixed_code)
+                print(f"  [FEEDBACK]:\n{feedback}\n")
                 print(f"  [FIX]:\n{fixed_code}\n")
             except Exception as e:
                 print(f"  [ERROR]: Repair failed: {e}")
