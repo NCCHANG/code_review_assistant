@@ -3,7 +3,7 @@ import sys
 import ast
 
 # Import own components
-from Predictor import load_model as load_predictor, predict_bug
+import Predictor
 from Repairer import fix_bug , generate_feedback
 
 def extract_functions(code: str):
@@ -21,7 +21,7 @@ def extract_functions(code: str):
             functions.append((node.name, func_source))
     return functions
 
-def process_file_or_input(user_input: str, model, vectorizer):
+def process_file_or_input(user_input: str, predictor_model):
     # ----------------------------------------------------------------
     # EXTRACTING FUNCTIONS FROM FILE OR RAW CODE
     # Check if input is a file path
@@ -50,7 +50,7 @@ def process_file_or_input(user_input: str, model, vectorizer):
     for func_name, func_code in functions:
         print(f"--- Checking: {func_name} ---")
         
-        is_buggy, confidence = predict_bug(func_code, model, vectorizer, threshold=0.30)
+        is_buggy, confidence = predictor_model.predict(func_code, threshold=0.30)
         
         if is_buggy:
             print(f"  [STATUS]: BUGGY (Prob: {confidence:.2%})")
@@ -67,11 +67,7 @@ def process_file_or_input(user_input: str, model, vectorizer):
 
 def main():
     print("Loading AI Models...")
-    rf_model, rf_vectorizer = load_predictor()
-    
-    if not rf_model or not rf_vectorizer:
-        print("CRITICAL ERROR: Could not load the Random Forest (Predictor) model.")
-        return
+    predictor_model = Predictor.Predictor()
 
     print("\n" + "="*50)
     print("      CODE REVIEW ASSISTANT (Hybrid AI)")
@@ -83,7 +79,7 @@ def main():
         if user_input.lower() == 'exit':
             break
         
-        process_file_or_input(user_input, rf_model, rf_vectorizer)
+        process_file_or_input(user_input, predictor_model)
 
 if __name__ == "__main__":
     main()
