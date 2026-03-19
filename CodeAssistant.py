@@ -6,7 +6,7 @@ import ast
 from Predictor import load_model as load_predictor, predict_bug
 from Repairer import fix_bug , generate_feedback
 
-def extract_functions(code):
+def extract_functions(code: str):
     """Parses code and returns a list of (function_name, source_code of function (def func ....) ) tuples."""
     try:
         tree = ast.parse(code)
@@ -21,7 +21,7 @@ def extract_functions(code):
             functions.append((node.name, func_source))
     return functions
 
-def process_file_or_input(user_input, model, vectorizer):
+def process_file_or_input(user_input: str, model, vectorizer):
     # ----------------------------------------------------------------
     # EXTRACTING FUNCTIONS FROM FILE OR RAW CODE
     # Check if input is a file path
