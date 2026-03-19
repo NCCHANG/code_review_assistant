@@ -27,18 +27,24 @@ def load_model():
     print("Model loaded.")
     return model, vectorizer
 
-def predict_bug(code_snippet: str, model, vectorizer, threshold=0.30):
-    # Pass raw code snippet (vectorizer handles tokenization)
-    vectorized_code = vectorizer.transform([code_snippet])
-    
-    # Predict Probability
-    # Class 0 = Clean, Class 1 = Buggy
-    probability = model.predict_proba(vectorized_code)[0][1] 
-    
-    # Custom Thresholding (Default 0.35 to prioritize Recall)
-    prediction = 1 if probability >= threshold else 0
-    
-    return prediction, probability
+class Predictor:
+    def __init__(self):
+        self.model, self.vectorizer = load_model()
+        if self.model is None or self.vectorizer is None:
+            print("Error: Model or vectorizer could not be loaded. Predictor will not function.")
+
+    def predict(self, code_snippet: str, threshold=0.30):
+        # Pass raw code snippet (vectorizer handles tokenization)
+        vectorized_code = self.vectorizer.transform([code_snippet])
+        
+        # Predict Probability
+        # Class 0 = Clean, Class 1 = Buggy
+        probability = self.model.predict_proba(vectorized_code)[0][1] 
+        
+        # Custom Thresholding (Default 0.35 to prioritize Recall)
+        prediction = 1 if probability >= threshold else 0
+        
+        return prediction, probability
 
 if __name__ == "__main__":
     model, vectorizer = load_model()
@@ -53,7 +59,8 @@ if __name__ == "__main__":
         #     if user_input.lower() == 'exit':
         #         break
                 
-        is_buggy, confidence = predict_bug(user_input, model, vectorizer)
+        predictor = Predictor()
+        is_buggy, confidence = predictor.predict(user_input)
         
         if is_buggy == 1:
             status = "BUGGY"
