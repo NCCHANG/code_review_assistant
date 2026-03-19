@@ -27,7 +27,7 @@ def load_model():
     print("Model loaded.")
     return model, vectorizer
 
-def predict_bug(code_snippet, model, vectorizer, threshold=0.30):
+def predict_bug(code_snippet: str, model, vectorizer, threshold=0.30):
     # Pass raw code snippet (vectorizer handles tokenization)
     vectorized_code = vectorizer.transform([code_snippet])
     

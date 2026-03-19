@@ -35,7 +35,7 @@ except Exception as e:
     print(f"Error loading model: {e}")
     sys.exit(1)
 
-def fix_bug(buggy_code, intention=""):
+def fix_bug(buggy_code: str, intention=""):
     # Prefix as used in training
     if intention != "":
         input_text = f"fix intent: {str(intention).strip()} code: {buggy_code}"
@@ -52,7 +52,7 @@ def fix_bug(buggy_code, intention=""):
     fixed_code = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return fixed_code
 
-def generate_feedback(buggy_code, fixed_code):
+def generate_feedback(buggy_code: str, fixed_code: str):
     prompt = f"""
     You are a Code Reviewer.
     Buggy Code: {buggy_code}
