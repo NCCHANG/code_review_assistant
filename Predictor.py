@@ -28,6 +28,8 @@ def load_model():
     return model, vectorizer
 
 class Predictor:
+    model = None
+    vectorizer = None
     def __init__(self):
         self.model, self.vectorizer = load_model()
         if self.model is None or self.vectorizer is None:
