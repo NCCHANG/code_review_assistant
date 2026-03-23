@@ -4,7 +4,7 @@ import ast
 
 # Import own components
 import Predictor
-from Repairer import fix_bug , generate_feedback
+import Repairer
 
 def extract_functions(code: str):
     """Parses code and returns a list of (function_name, source_code of function (def func ....) ) tuples."""
@@ -21,7 +21,7 @@ def extract_functions(code: str):
             functions.append((node.name, func_source))
     return functions
 
-def process_file_or_input(user_input: str, predictor_model):
+def process_file_or_input(user_input: str, predictor_model, repairer_model):
     # ----------------------------------------------------------------
     # EXTRACTING FUNCTIONS FROM FILE OR RAW CODE
     # Check if input is a file path
@@ -56,8 +56,8 @@ def process_file_or_input(user_input: str, predictor_model):
             print(f"  [STATUS]: BUGGY (Prob: {confidence:.2%})")
             print(f"  [ACTION]: Repairing...")
             try:
-                fixed_code = fix_bug(func_code)
-                feedback = generate_feedback(func_code, fixed_code)
+                fixed_code = repairer_model.fix(func_code)
+                feedback = repairer_model.generate_feedback(func_code, fixed_code)
                 print(f"  [FEEDBACK]:\n{feedback}\n")
                 print(f"  [FIX]:\n{fixed_code}\n")
             except Exception as e:
@@ -68,6 +68,7 @@ def process_file_or_input(user_input: str, predictor_model):
 def main():
     print("Loading AI Models...")
     predictor_model = Predictor.Predictor()
+    repairer_model = Repairer.Repairer()
 
     print("\n" + "="*50)
     print("      CODE REVIEW ASSISTANT (Hybrid AI)")
@@ -79,7 +80,7 @@ def main():
         if user_input.lower() == 'exit':
             break
         
-        process_file_or_input(user_input, predictor_model)
+        process_file_or_input(user_input, predictor_model, repairer_model)
 
 if __name__ == "__main__":
     main()
