@@ -76,7 +76,7 @@ class Repairer:
         Fixed Code: {fixed_code}
         
         Task:
-        1. Analysis: 1 sentence on the bug.
+        1. Analysis: 1 sentence on the bug. Or if no chance say no bug found. then no need to do reasoning.
         2. Reasoning: 1 or 2 sentences on the fix.
         
         Format:
