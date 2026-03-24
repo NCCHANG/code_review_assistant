@@ -23,26 +23,10 @@ def extract_functions(code: str):
 
 def process_file_or_input(user_input: str, predictor_model, repairer_model):
     # ----------------------------------------------------------------
-    # EXTRACTING FUNCTIONS FROM FILE OR RAW CODE
-    # Check if input is a file path
-    if os.path.exists(user_input):
-        try:
-            with open(user_input, 'r', encoding='utf-8') as f:
-                code_content = f.read()
-            print(f"Reading file: {user_input}")
-            functions = extract_functions(code_content)
-        except Exception as e:
-            print(f"Error reading file: {e}")
-            return
-    else:
-        # Treat as raw code if not a file path
-        functions = extract_functions(user_input)
-        if not functions:
-            functions = [("UserSnippet", user_input)]
-
+    # EXTRACTING FUNCTIONS FROM RAW CODE
+    functions = extract_functions(user_input)
     if not functions:
-        print("No functions found to analyze.")
-        return
+        functions = [("UserSnippet", user_input)]
 
     print(f"\nAnalyzing {len(functions)} function(s)...\n")
     #--------------------------------------------------------------------
