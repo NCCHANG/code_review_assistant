@@ -6,53 +6,67 @@ import ast
 import Predictor
 import Repairer
 
-def extract_functions(code: str):
-    """Parses code and returns a list of (function_name, source_code of function (def func ....) ) tuples."""
-    try:
-        tree = ast.parse(code)
-    except SyntaxError:
-        print("Syntax Error in input code. Cannot parse functions.")
-        return []
-        
-    functions = []
-    for node in ast.walk(tree): #walk through whole code tree to find all functions
-        if isinstance(node, ast.FunctionDef):
-            func_source = ast.get_source_segment(code, node)
-            functions.append((node.name, func_source))
-    return functions
+class CodeAssistant:
+    def __init__(self):
+        self.predictor = Predictor.Predictor()
+        self.repairer = Repairer.Repairer()
 
-def process_file_or_input(user_input: str, predictor_model, repairer_model):
-    # ----------------------------------------------------------------
-    # EXTRACTING FUNCTIONS FROM RAW CODE
-    functions = extract_functions(user_input)
-    if not functions:
-        functions = [("UserSnippet", user_input)]
+    def _extract_functions(self, code: str):
+        """Parses code and returns a list of (function_name, source_code of function (def func ....) ) tuples."""
+        try:
+            tree = ast.parse(code)
+        except SyntaxError:
+            print("Syntax Error in input code. Cannot parse functions.")
+            return []
+            
+        functions = []
+        for node in ast.walk(tree): #walk through whole code tree to find all functions
+            if isinstance(node, ast.FunctionDef):
+                func_source = ast.get_source_segment(code, node)
+                functions.append((node.name, func_source))
+        return functions
 
-    print(f"\nAnalyzing {len(functions)} function(s)...\n")
-    #--------------------------------------------------------------------
-    #PREDICT & REPAIR
-    for func_name, func_code in functions:
-        print(f"--- Checking: {func_name} ---")
-        
-        is_buggy, confidence = predictor_model.predict(func_code, threshold=0.30)
-        
-        if is_buggy:
-            print(f"  [STATUS]: BUGGY (Prob: {confidence:.2%})")
-            print(f"  [ACTION]: Repairing...")
+    def process_file_or_input(self, user_input: str):
+        # ----------------------------------------------------------------
+        # EXTRACTING FUNCTIONS FROM RAW CODE
+        if os.path.exists(user_input):
+            print(f"Reading code from file: {user_input}")
             try:
-                fixed_code = repairer_model.fix(func_code)
-                feedback = repairer_model.generate_feedback(func_code, fixed_code)
-                print(f"  [FEEDBACK]:\n{feedback}\n")
-                print(f"  [FIX]:\n{fixed_code}\n")
+                with open(user_input, 'r') as f:
+                    user_input = f.read()
+                    functions = self._extract_functions(user_input)
             except Exception as e:
-                print(f"  [ERROR]: Repair failed: {e}")
+                print(f"Error reading file: {e}")
+                return
         else:
-            print(f"  [STATUS]: CLEAN (Prob: {confidence:.2%})\n")
+            functions = self._extract_functions(user_input)
+            if not functions:
+                functions = [("UserSnippet", user_input)]
+
+        print(f"\nAnalyzing {len(functions)} function(s)...\n")
+        #--------------------------------------------------------------------
+        #PREDICT & REPAIR
+        for func_name, func_code in functions:
+            print(f"--- Checking: {func_name} ---")
+            
+            is_buggy, confidence = self.predictor.predict(func_code, threshold=0.30)
+            
+            if is_buggy:
+                print(f"  [STATUS]: BUGGY (Prob: {confidence:.2%})")
+                print(f"  [ACTION]: Repairing...")
+                try:
+                    fixed_code = self.repairer.fix(func_code)
+                    feedback = self.repairer.generate_feedback(func_code, fixed_code)
+                    print(f"  [FEEDBACK]:\n{feedback}\n")
+                    print(f"  [FIX]:\n{fixed_code}\n")
+                except Exception as e:
+                    print(f"  [ERROR]: Repair failed: {e}")
+            else:
+                print(f"  [STATUS]: CLEAN (Prob: {confidence:.2%})\n")
 
 def main():
     print("Loading AI Models...")
-    predictor_model = Predictor.Predictor()
-    repairer_model = Repairer.Repairer()
+    code_assistant = CodeAssistant()
 
     print("\n" + "="*50)
     print("      CODE REVIEW ASSISTANT (Hybrid AI)")
@@ -64,7 +78,7 @@ def main():
         if user_input.lower() == 'exit':
             break
         
-        process_file_or_input(user_input, predictor_model, repairer_model)
+        code_assistant.process_file_or_input(user_input)
 
 if __name__ == "__main__":
     main()
