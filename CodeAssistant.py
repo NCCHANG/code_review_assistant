@@ -7,6 +7,8 @@ import Predictor
 import Repairer
 
 class CodeAssistant:
+    functions_and_bugginess = [] # List of tuples: (function_name, is_buggy, confidence)
+    functions_fix_feedback = [] # List of tuples: (function_name, fixed_code, feedback)
     def __init__(self):
         self.predictor = Predictor.Predictor()
         self.repairer = Repairer.Repairer()
@@ -50,6 +52,7 @@ class CodeAssistant:
             print(f"--- Checking: {func_name} ---")
             
             is_buggy, confidence = self.predictor.predict(func_code, threshold=0.30)
+            self.functions_and_bugginess.append((func_name, is_buggy, confidence))
             
             if is_buggy:
                 print(f"  [STATUS]: BUGGY (Prob: {confidence:.2%})")
@@ -57,12 +60,15 @@ class CodeAssistant:
                 try:
                     fixed_code = self.repairer.fix(func_code)
                     feedback = self.repairer.generate_feedback(func_code, fixed_code)
+                    self.functions_fix_feedback.append((func_name, fixed_code, feedback))
                     print(f"  [FEEDBACK]:\n{feedback}\n")
                     print(f"  [FIX]:\n{fixed_code}\n")
                 except Exception as e:
                     print(f"  [ERROR]: Repair failed: {e}")
             else:
                 print(f"  [STATUS]: CLEAN (Prob: {confidence:.2%})\n")
+    def get_analysis_results(self):
+        return self.functions_and_bugginess, self.functions_fix_feedback
 
 def main():
     print("Loading AI Models...")
