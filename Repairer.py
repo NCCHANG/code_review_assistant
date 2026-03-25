@@ -4,11 +4,14 @@ import torch
 from transformers import RobertaTokenizer, T5ForConditionalGeneration
 from openai import OpenAI
 from google import genai
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
 
 class Repairer:
-    GROQ_KEY = "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"
+    GROQ_KEY = os.getenv("GROQ_API_KEY")
     groq_client = None
-    GEMINI_KEY = "AIzaSyCdkseSms9ughYFLw0OswbW6P9_wg3Cy70"
+    GEMINI_KEY = os.getenv("GEMINI_API_KEY")
     gemini_client = None
     def __init__(self):
         self._setup_AI_clients()
