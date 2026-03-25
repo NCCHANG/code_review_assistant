@@ -2,7 +2,7 @@ import sys
 from PySide6 import QtCore, QtWidgets, QtGui
 
 
-class CodeAnalysisAssistant(QtWidgets.QMainWindow):
+class MainWindowUI(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Code Analysis Assistant")
@@ -172,6 +172,6 @@ class CodeAnalysisAssistant(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
-    window = CodeAnalysisAssistant()
+    window = MainWindowUI()
     window.show()
     sys.exit(app.exec())
