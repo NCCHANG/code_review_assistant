@@ -5,23 +5,20 @@ import sys
 # Get the directory where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Ensure we can find model_utils in the training directory
-# Ensure we can find model files in the training directory
 training_dir = os.path.join(script_dir, "training")
-
-# Ensure we can find rf_model_utils in the training/rf directory
 rf_dir = os.path.join(training_dir, "rf")
-if rf_dir not in sys.path:
-    sys.path.append(rf_dir)
 
-from rf_model_utils import tokenizer
+if rf_dir not in sys.path:
+    sys.path.insert(0,rf_dir)
+
+from training.rf.rf_model_utils import tokenizer
 
 def load_model():
-    model_path = os.path.join(training_dir, "rf_model.joblib")
-    vectorizer_path = os.path.join(training_dir, "vectorizer.joblib")
+    model_path = os.path.join(rf_dir, "rf_model.joblib")
+    vectorizer_path = os.path.join(rf_dir, "vectorizer.joblib")
     
     if not os.path.exists(model_path) or not os.path.exists(vectorizer_path):
-        print("Model files not found. Please train the model first.")
+        print("Path Error: Model or vectorizer file not found. Please ensure 'rf_model.joblib' and 'vectorizer.joblib' are in the 'training' directory.")
         return None, None
         
     print("Loading model...")
@@ -30,18 +27,26 @@ def load_model():
     print("Model loaded.")
     return model, vectorizer
 
-def predict_bug(code_snippet, model, vectorizer, threshold=0.30):
-    # Pass raw code snippet (vectorizer handles tokenization)
-    vectorized_code = vectorizer.transform([code_snippet])
-    
-    # Predict Probability
-    # Class 0 = Clean, Class 1 = Buggy
-    probability = model.predict_proba(vectorized_code)[0][1] 
-    
-    # Custom Thresholding (Default 0.35 to prioritize Recall)
-    prediction = 1 if probability >= threshold else 0
-    
-    return prediction, probability
+class Predictor:
+    model = None
+    vectorizer = None
+    def __init__(self):
+        self.model, self.vectorizer = load_model()
+        if self.model is None or self.vectorizer is None:
+            print("Error: Model or vectorizer could not be loaded. Predictor will not function.")
+
+    def predict(self, code_snippet: str, threshold=0.30):
+        # Pass raw code snippet (vectorizer handles tokenization)
+        vectorized_code = self.vectorizer.transform([code_snippet])
+        
+        # Predict Probability
+        # Class 0 = Clean, Class 1 = Buggy
+        probability = self.model.predict_proba(vectorized_code)[0][1] 
+        
+        # Custom Thresholding (Default 0.35 to prioritize Recall)
+        prediction = 1 if probability >= threshold else 0
+        
+        return prediction, probability
 
 if __name__ == "__main__":
     model, vectorizer = load_model()
@@ -56,11 +61,12 @@ if __name__ == "__main__":
         #     if user_input.lower() == 'exit':
         #         break
                 
-        is_buggy, confidence = predict_bug(user_input, model, vectorizer)
+        predictor = Predictor()
+        is_buggy, confidence = predictor.predict(user_input)
         
         if is_buggy == 1:
             status = "BUGGY"
         else:
             status = "CLEAN"
         
-        print(f"Result: {status} (Confidence: {confidence:.2%})")
+        print(f"Result: {status} (Confidence its buggy: {confidence:.2%})")

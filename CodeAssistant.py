@@ -3,11 +3,11 @@ import sys
 import ast
 
 # Import own components
-from Predictor import load_model as load_predictor, predict_bug
-from Repairer import fix_bug
+import Predictor
+import Repairer
 
-def extract_functions(code):
-    """Parses code and returns a list of (function_name, source_code) tuples."""
+def extract_functions(code: str):
+    """Parses code and returns a list of (function_name, source_code of function (def func ....) ) tuples."""
     try:
         tree = ast.parse(code)
     except SyntaxError:
@@ -15,48 +15,34 @@ def extract_functions(code):
         return []
         
     functions = []
-    for node in ast.walk(tree):
+    for node in ast.walk(tree): #walk through whole code tree to find all functions
         if isinstance(node, ast.FunctionDef):
-            # Get the source segment
             func_source = ast.get_source_segment(code, node)
             functions.append((node.name, func_source))
     return functions
 
-def process_file_or_input(user_input, model, vectorizer):
-    # Check if input is a file path
-    if os.path.exists(user_input):
-        try:
-            with open(user_input, 'r', encoding='utf-8') as f:
-                code_content = f.read()
-            print(f"Reading file: {user_input}")
-            functions = extract_functions(code_content)
-        except Exception as e:
-            print(f"Error reading file: {e}")
-            return
-    else:
-        # Treat as raw code
-        # Try to parse as functions, if failure (e.g. just a snippet), treat as one block
-        functions = extract_functions(user_input)
-        if not functions:
-            functions = [("UserSnippet", user_input)]
-
+def process_file_or_input(user_input: str, predictor_model, repairer_model):
+    # ----------------------------------------------------------------
+    # EXTRACTING FUNCTIONS FROM RAW CODE
+    functions = extract_functions(user_input)
     if not functions:
-        print("No functions found to analyze.")
-        return
+        functions = [("UserSnippet", user_input)]
 
     print(f"\nAnalyzing {len(functions)} function(s)...\n")
-    
+    #--------------------------------------------------------------------
+    #PREDICT & REPAIR
     for func_name, func_code in functions:
         print(f"--- Checking: {func_name} ---")
         
-        # 1. PREDICT
-        is_buggy, confidence = predict_bug(func_code, model, vectorizer, threshold=0.30)
+        is_buggy, confidence = predictor_model.predict(func_code, threshold=0.30)
         
         if is_buggy:
             print(f"  [STATUS]: BUGGY (Prob: {confidence:.2%})")
             print(f"  [ACTION]: Repairing...")
             try:
-                fixed_code = fix_bug(func_code)
+                fixed_code = repairer_model.fix(func_code)
+                feedback = repairer_model.generate_feedback(func_code, fixed_code)
+                print(f"  [FEEDBACK]:\n{feedback}\n")
                 print(f"  [FIX]:\n{fixed_code}\n")
             except Exception as e:
                 print(f"  [ERROR]: Repair failed: {e}")
@@ -65,11 +51,8 @@ def process_file_or_input(user_input, model, vectorizer):
 
 def main():
     print("Loading AI Models...")
-    rf_model, rf_vectorizer = load_predictor()
-    
-    if not rf_model or not rf_vectorizer:
-        print("CRITICAL ERROR: Could not load the Random Forest (Predictor) model.")
-        return
+    predictor_model = Predictor.Predictor()
+    repairer_model = Repairer.Repairer()
 
     print("\n" + "="*50)
     print("      CODE REVIEW ASSISTANT (Hybrid AI)")
@@ -81,7 +64,7 @@ def main():
         if user_input.lower() == 'exit':
             break
         
-        process_file_or_input(user_input, rf_model, rf_vectorizer)
+        process_file_or_input(user_input, predictor_model, repairer_model)
 
 if __name__ == "__main__":
     main()
