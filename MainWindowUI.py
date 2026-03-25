@@ -175,7 +175,7 @@ class MainWindowUI(QtWidgets.QMainWindow):
         print("\n--- Fixes & Feedback ---")
         for func_name, fixed_code, feedback in fix_feedback:
             print(f"Function: {func_name}")
-            print(f"Feedback:\n{feedback}")
+            print(f"Feedback as below:\n{feedback}")
             print(f"Suggested Fix:\n{fixed_code}\n")
         QtWidgets.QMessageBox.information(self, "Analysis", "Code analysis completed!")
     
