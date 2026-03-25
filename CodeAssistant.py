@@ -28,22 +28,12 @@ class CodeAssistant:
                 functions.append((node.name, func_source))
         return functions
 
-    def process_file_or_input(self, user_input: str, context=""):
+    def process_file_or_input(self, code_content: str, context=""):
         # ----------------------------------------------------------------
         # EXTRACTING FUNCTIONS FROM RAW CODE
-        if os.path.exists(user_input):
-            print(f"Reading code from file: {user_input}")
-            try:
-                with open(user_input, 'r') as f:
-                    user_input = f.read()
-                    functions = self._extract_functions(user_input)
-            except Exception as e:
-                print(f"Error reading file: {e}")
-                return
-        else:
-            functions = self._extract_functions(user_input)
-            if not functions:
-                functions = [("UserSnippet", user_input)]
+        functions = self._extract_functions(code_content)
+        if not functions:
+            functions = [("UserSnippet", code_content)]
 
         print(f"\nAnalyzing {len(functions)} function(s)...\n")
         #--------------------------------------------------------------------
