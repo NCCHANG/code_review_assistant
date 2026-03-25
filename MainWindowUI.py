@@ -1,10 +1,12 @@
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
+import CodeAssistant
 
 
 class MainWindowUI(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
+        self.code_assistant = CodeAssistant.CodeAssistant()
         self.setWindowTitle("Code Analysis Assistant")
         self.setGeometry(100, 100, 900, 800)
         
@@ -153,17 +155,29 @@ class MainWindowUI(QtWidgets.QMainWindow):
                 QtWidgets.QMessageBox.critical(self, "Error", f"Could not read file: {str(e)}")
     
     def _analyze_code(self):
+        QtWidgets.QMessageBox.information(self, "Analysis", "Code analysis Started! Please Wait!")
         code = self.code_input.toPlainText()
         context = self.context_input.toPlainText()
+        if context:
+            self.code_assistant.process_file_or_input(code, context)
+        else:            
+            self.code_assistant.process_file_or_input(code)
         
         if not code.strip():
             QtWidgets.QMessageBox.warning(self, "Warning", "Please enter some code to analyze.")
             return
         
-        # TODO: Implement code analysis logic here
-        print("Code:", code)
-        print("Context:", context)
-        QtWidgets.QMessageBox.information(self, "Analysis", "Code analysis started!")
+        buginess_results, fix_feedback = self.code_assistant.get_analysis_results()
+        print("\n--- Analysis Results ---")
+        for func_name, is_buggy, confidence in buginess_results:
+            status = "BUGGY" if is_buggy else "CLEAN"
+            print(f"{func_name}: {status} (Confidence: {confidence:.2%})")
+        print("\n--- Fixes & Feedback ---")
+        for func_name, fixed_code, feedback in fix_feedback:
+            print(f"Function: {func_name}")
+            print(f"Feedback:\n{feedback}")
+            print(f"Suggested Fix:\n{fixed_code}\n")
+        QtWidgets.QMessageBox.information(self, "Analysis", "Code analysis completed!")
     
     def _clear_fields(self):
         self.code_input.clear()
