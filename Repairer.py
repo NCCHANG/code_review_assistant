@@ -17,7 +17,7 @@ class Repairer:
         self._setup_AI_clients()
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         self.trained_model_path = os.path.join(self.script_dir, "training", "t5", "saved_model")
-        self._setup_model(self.trained_model_path)
+        self._setup_model()
         
     def _setup_AI_clients(self):
         #Setting UP Grok OpenAI Client
@@ -38,7 +38,7 @@ class Repairer:
             print(f"Error initializing Gemini GenAI client: {e}")
             self.gemini_client = None
     
-    def _setup_model(self, trained_model_path):
+    def _setup_model(self):
         self.base_model_name = "Salesforce/codet5-base"
         if os.path.exists(self.trained_model_path):
             print(f"Loading Trained Model from: {self.trained_model_path}")
