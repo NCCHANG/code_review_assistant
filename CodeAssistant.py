@@ -28,7 +28,7 @@ class CodeAssistant:
                 functions.append((node.name, func_source))
         return functions
 
-    def process_file_or_input(self, user_input: str):
+    def process_file_or_input(self, user_input: str, context=""):
         # ----------------------------------------------------------------
         # EXTRACTING FUNCTIONS FROM RAW CODE
         if os.path.exists(user_input):
@@ -58,7 +58,10 @@ class CodeAssistant:
                 print(f"  [STATUS]: BUGGY (Prob: {confidence:.2%})")
                 print(f"  [ACTION]: Repairing...")
                 try:
-                    fixed_code = self.repairer.fix(func_code)
+                    if context:
+                        fixed_code = self.repairer.fix(func_code, intention=context)
+                    else:
+                        fixed_code = self.repairer.fix(func_code)
                     feedback = self.repairer.generate_feedback(func_code, fixed_code)
                     self.functions_fix_feedback.append((func_name, fixed_code, feedback))
                     print(f"  [FEEDBACK]:\n{feedback}\n")
