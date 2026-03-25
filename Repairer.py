@@ -80,7 +80,7 @@ class Repairer:
         Fixed Code: {fixed_code}
         
         Task:
-        1. Analysis: 1 sentence on the bug. Or if no chance say no bug found. then no need to do reasoning.
+        1. Analysis: Make a comparison between Buggy Code and Fixed Code. 1 sentence on the bug. Or if no change, say no bug found. Then no need to do reasoning if there's no bug.
         2. Reasoning: 1 or 2 sentences on the fix.
         
         Format:
