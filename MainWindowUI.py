@@ -106,6 +106,7 @@ class MainWindowUI(QtWidgets.QMainWindow):
         self.code_input = QtWidgets.QTextEdit()
         self.code_input.setPlaceholderText("# Enter your Python code here")
         self.code_input.setMinimumHeight(150)
+        self.code_input.textChanged.connect(self._update_analysis_button_state)
         main_layout.addWidget(self.code_input)
         
         # Context section
@@ -126,6 +127,7 @@ class MainWindowUI(QtWidgets.QMainWindow):
         self.analyze_btn.setMinimumHeight(40)
         self.analyze_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.analyze_btn.clicked.connect(self._analyze_code)
+        self.analyze_btn.setEnabled(False)  # Initially disabled until there's code input
         button_layout.addWidget(self.analyze_btn)
         
         clear_btn = QtWidgets.QPushButton("Clear")
@@ -182,6 +184,45 @@ class MainWindowUI(QtWidgets.QMainWindow):
     def _clear_fields(self):
         self.code_input.clear()
         self.context_input.clear()
+    
+    def _update_analysis_button_state(self):
+        """
+        Triggered whenever the text in code_input changes. 
+        Updates the analyze button's color based on whether there is text.
+        """
+        # .strip() removes whitespace, so spaces/newlines don't count as code
+        current_text = self.code_input.toPlainText().strip()
+        
+        if current_text:
+            # If there is text, make the button Blue and active
+            self.analyze_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #0066ff;
+                    color: white;
+                    border-radius: 4px;
+                    padding: 8px 16px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #0052cc;
+                }
+            """)
+            self.analyze_btn.setEnabled(True)
+        else:
+            # If empty, revert to the default Grey
+            self.analyze_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #cccccc;
+                    color: #666666;
+                    border-radius: 4px;
+                    padding: 8px 16px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #bbbbbb;
+                }
+            """)
+            self.analyze_btn.setEnabled(False)
 
 
 if __name__ == "__main__":
