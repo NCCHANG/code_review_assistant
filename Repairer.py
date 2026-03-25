@@ -34,6 +34,7 @@ class Repairer:
         #Setting up gemini GenAI Client
         try:
             self.gemini_client = genai.Client(api_key=self.GEMINI_KEY)
+            print("Gemini client initialized.")
         except Exception as e:
             print(f"Error initializing Gemini GenAI client: {e}")
             self.gemini_client = None
