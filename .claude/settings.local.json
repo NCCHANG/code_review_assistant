@@ -10,7 +10,10 @@
       "Bash(.venv/Scripts/python.exe -c \"from dotenv import load_dotenv; print\\('dotenv ok'\\)\")",
       "Bash(.venv/Scripts/python.exe -c \"from google import genai; print\\('genai ok'\\)\")",
       "Bash(.venv/Scripts/pip install *)",
-      "Bash(.venv/Scripts/python.exe Repairer.py)"
+      "Bash(.venv/Scripts/python.exe Repairer.py)",
+      "Bash(git rebase *)",
+      "Bash(git rm *)",
+      "Bash(git add *)"
     ]
   }
 }
