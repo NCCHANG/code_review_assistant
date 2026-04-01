@@ -5,3 +5,5 @@ venv
 results
 saved_model
 .env
+.vscode
+__pycache__

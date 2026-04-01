@@ -1,177 +1,78 @@
-import random
+import os
 import pandas as pd
-import re
-import sys
-import ast
-import warnings
-from datasets import load_dataset
+from git import Repo
 
-# Functions to sabotaging dataset
-def bug_logic_operator(code):
-    """Swaps math operators to break logic (e.g., + becomes -)"""
-    swaps = {
-        r'\+': '-', 
-        r'-': '+', 
-        r'\*': '/', 
-        r'/': '*',
-        r'<': '>',
-        r'>': '<',
-        r'==': '!=',
-    }
+def mine_local_repository(repo_url, repo_dir):
+    print(f"\n📁 Processing repository: {repo_url}")
     
-    # Check which operators are present in the in the code.
-    # \s* preserves surrounding whitespace to avoid merging tokens (e.g., "x+1" -> "x - 1" instead of "x-1").
-    found_ops = []
-    for op_pat in swaps.keys():
-        pat = r'\s*' + op_pat + r'\s*'
-        if re.search(pat, code):
-            found_ops.append((pat, swaps[op_pat]))
+    # 1. Clone the repo to your machine if it isn't there already
+    if not os.path.exists(repo_dir):
+        print(f"   Downloading (cloning) the repository... This takes a minute or two.")
+        Repo.clone_from(repo_url, repo_dir)
+    
+    repo = Repo(repo_dir)
+    print(f"   Successfully loaded. Mining commit history at lightning speed...")
+    
+    dataset = []
+    keywords = ['fix', 'bug', 'resolve', 'patch', 'issue']
+    
+    # 2. Iterate through the last 10,000 commits! (No API limits here)
+    for commit in list(repo.iter_commits('HEAD', max_count=10000)):
+        message = commit.message.lower()
+        
+        # 3. Check if the commit message implies a bug fix
+        if any(keyword in message for keyword in keywords):
+            if not commit.parents:
+                continue
+                
+            parent = commit.parents[0]
             
-    if not found_ops:
-        return code
-        
-    target_pattern, replacement = random.choice(found_ops)
+            # 4. Find what files changed between the buggy parent and this fix
+            diffs = parent.diff(commit)
+            
+            for diff in diffs:
+                # We only want Python files that were modified
+                if diff.a_path and diff.a_path.endswith('.py') and diff.change_type == 'M':
+                    try:
+                        # Extract buggy and fixed code directly from your hard drive!
+                        buggy_code = parent.tree[diff.a_path].data_stream.read().decode('utf-8')
+                        fixed_code = commit.tree[diff.b_path].data_stream.read().decode('utf-8')
+                        
+                        if buggy_code and fixed_code and buggy_code != fixed_code:
+                            dataset.append({
+                                'input_text': buggy_code,
+                                'target_text': fixed_code,
+                                'commit_message': commit.message.split('\n')[0],
+                                'repo': repo_url.split('/')[-1]
+                            })
+                    except Exception:
+                        # Skip files that can't be decoded cleanly
+                        continue
 
-    # Use re.sub to replace only the first occurrence of the target pattern with the replacement, preserving whitespace.
-    return re.sub(target_pattern, f" {replacement} ", code, count=1)
-
-def bug_logic_boolean(code):
-    """Flips booleans (True -> False)"""
-    if "True" in code:
-        return code.replace("True", "False", 1)
-    if "False" in code:
-        return code.replace("False", "True", 1)
-    return code
-
-def bug_logic_off_by_one(code):
-    """Changes loop ranges or comparisons (i < 10 -> i <= 10)"""
-    # Change < to <=
-    if " < " in code:
-        return code.replace(" < ", " <= ", 1)
-    # Change > to >=
-    if " > " in code:
-        return code.replace(" > ", " >= ", 1)
-    # Change 0 to 1 (classic array indexing error)
-    if "range(0" in code:
-        return code.replace("range(0", "range(1", 1)
-    return code
-
-def bug_logic_variable_swap(code):
-    """Swaps variable usage (return x -> return y)"""
-    # This is hard to do safely with regex, but we can try simple argument swaps
-    # Find patterns like "f(a, b)" and swap to "f(b, a)"
-    match = re.search(r'\((\w+), (\w+)\)', code)
-    if match:
-        original = match.group(0) # (a, b)
-        v1, v2 = match.group(1), match.group(2)
-        swapped = f"({v2}, {v1})"
-        return code.replace(original, swapped, 1)
-    return code
-
-def bug_wrong_method(code):
-    """Swaps common list/set/string methods"""
-    method_swaps = {
-        'append': 'extend',
-        'extend': 'append',
-        'add': 'update',   
-        'update': 'add',
-        'strip': 'split',
-        'split': 'strip',
-    }
-    
-    candidates = [m for m in method_swaps.keys() if f".{m}(" in code]
-    if not candidates:
-        return code
-        
-    target = random.choice(candidates)
-    replacement = method_swaps[target]
-    return code.replace(f".{target}(", f".{replacement}(", 1)
-
-def bug_missing_return(code):
-    """Removes the return keyword (logic error: returns None instead of value)"""
-    # Matches 'return' followed by whitespace
-    if re.search(r'\breturn\s+', code):
-        return re.sub(r'\breturn\s+', '', code, count=1)
-    return code
-
-def bug_logic_and_or(code):
-    """Swaps 'and' with 'or' and vice versa"""
-    # Use word boundaries \b to avoid matching 'hand' or 'door'
-    if re.search(r'\band\b', code):
-        return re.sub(r'\band\b', 'or', code, count=1)
-    if re.search(r'\bor\b', code):
-        return re.sub(r'\bor\b', 'and', code, count=1)
-    return code
+    print(f"   ✅ Extracted {len(dataset)} Python bugs from this repository!")
+    return dataset
 
 if __name__ == "__main__":
-    print("--- 1. LOADING FULL DATASET ---")
-    print("This might take a few minutes because we are downloading ~1GB of data.")
-
-    # "[:1%]" loads EVERYTHING.
-    # 'split="train"' means "give me all training data".
-    try:
-        dataset = load_dataset("claudios/code_search_net", "python", split="train")
-    except Exception as e:
-        print("Standard load failed: ", e)
-        sys.exit(1)
-
-    print(f"SUCCESS: Loaded {len(dataset)} real Python functions.")
-    print("Now generating synthetic bugs for ALL of them. This will take time...")
-
-    # GENERATE A MASSIVE DATASET
-    synthetic_pairs = []
-    bug_generators = [bug_logic_operator, bug_logic_boolean, bug_logic_off_by_one, bug_logic_variable_swap, bug_wrong_method, bug_missing_return, bug_logic_and_or]
-
-    TARGET_SIZE = 100000 
-    print(f"Targeting {TARGET_SIZE} samples for your FYP...")
-
-    count = 0
-    for example in dataset:
-        original_code = example['func_code_string']
-        intention = example.get('func_documentation_string', '') or ''
+    # We are targeting three massive, highly respected Python projects
+    target_repos = [
+        ("https://github.com/psf/requests.git", "./cloned_repos/requests"),
+        ("https://github.com/pallets/flask.git", "./cloned_repos/flask"),
+        ("https://github.com/django/django.git", "./cloned_repos/django")
+    ]
+    
+    all_bugs = []
+    
+    # Ensure our download directory exists
+    os.makedirs("./cloned_repos", exist_ok=True)
+    
+    for url, path in target_repos:
+        bugs = mine_local_repository(url, path)
+        all_bugs.extend(bugs)
         
-        # Strip docstrings from the code
-        try:
-            # Turn warnings into errors so code with invalid escape sequences gets skipped
-            with warnings.catch_warnings():
-                warnings.simplefilter("error", SyntaxWarning)
-                tree = ast.parse(original_code)
-                for node in tree.body:
-                    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                        if ast.get_docstring(node):
-                            # remove the docstring (which is always the first statement in the body if it exists)
-                            node.body.pop(0)
-                            
-                # Unparse the tree back to source code (Python 3.9+)
-                original_code = ast.unparse(tree)
-        except Exception:
-            # If parsing throws an exception (SyntaxError) or a SyntaxWarning (promoted to error), 
-            # this sample will be discarded completely so the models only train on valid Modern Python
-            continue
-        
-        # Skip very long or very short code (hard to learn)
-        if len(original_code) > 512 or len(original_code) < 20:
-            continue
-            
-        injector = random.choice(bug_generators)
-        buggy_code = injector(original_code)
-        
-        if buggy_code != original_code:
-            synthetic_pairs.append({
-                'buggy_code': buggy_code, 
-                'fixed_code': original_code,
-                'intention': intention
-            })
-            count += 1
-            
-        if count >= TARGET_SIZE:
-            break
-
-    # SAVE TO CSV ---
-    df = pd.DataFrame(synthetic_pairs)
-    output_file = "synthetic_python_bugs.csv"
-    df.to_csv(output_file, index=False)
-
-    print(f"\n--- MISSION COMPLETE ---")
-    print(f"Generated {len(df)} real pairs.")
-    print(f"Saved to: {output_file}")
+    # Save the massive dataset!
+    if all_bugs:
+        df = pd.DataFrame(all_bugs)
+        output_name = "massive_local_bugs_dataset.csv"
+        df.to_csv(output_name, index=False)
+        print(f"\n🎉 SUCCESS! Saved {len(df)} total bugs to {output_name}")
+        print("Zero API rate limits hit! 😎")
