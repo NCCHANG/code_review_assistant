@@ -1,62 +1,73 @@
 import pandas as pd
-import sys
 from sklearn.model_selection import train_test_split
+import os
 
-# Load dataset
-try:
-    df = pd.read_csv("synthetic_python_bugs.csv")
-    print(f"Loaded Master Dataset: {len(df)} pairs")
-except FileNotFoundError:
-    sys.exit(-1)
-
-# Splitting dataset
-train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
-
-print(f"Train Pairs: {len(train_df)}")
-print(f"Test Pairs:  {len(test_df)}")
-
-# PREPARE DATASET FOR CLASSIFIER
-# to have columns ['code_snippet', 'label'] where label is 1 for buggy and 0 for clean code
-
-def prepare_for_classifier(dataframe):
-    # Take buggy one from dataset and label as 1
-    buggy = dataframe[['buggy_code']].copy()
-    buggy.columns = ['code_snippet']
-    buggy['label'] = 1
+def process_and_split_data():
+    print("🚀 Loading the massive local dataset...")
+    # Load the data you just mined
+    df = pd.DataFrame(pd.read_csv("massive_local_bugs_dataset.csv"))
     
-    # Take non-buggy one from dataset and label as 0
-    fixed = dataframe[['fixed_code']].copy()
-    fixed.columns = ['code_snippet']
-    fixed['label'] = 0
+    # Drop any accidental duplicates or empty rows
+    df = df.dropna()
+    df = df.drop_duplicates()
+    print(f"✅ Cleaned dataset contains {len(df)} unique bug/fix pairs.")
+
+    # Create directories to store the formatted data
+    os.makedirs("./processed_data/t5", exist_ok=True)
+    os.makedirs("./processed_data/rf", exist_ok=True)
+
+    # ==========================================
+    # 1. PREPARE CODET5 DATA (80% Train, 20% Test)
+    # ==========================================
+    print("\n📦 Splitting data for CodeT5 (Repairer)...")
     
-    # Combine both safe and non safe
-    combined = pd.concat([buggy, fixed])
-    # and shuffle
-    return combined.sample(frac=1, random_state=42).reset_index(drop=True)
+    # NEW: Combine the commit message (intent) with the buggy code
+    # We add a safety check .fillna('') just in case a commit message was blank
+    df['input_text'] = "Intent: " + df['commit_message'].fillna('') + " Code:\n" + df['input_text']
+    
+    # T5 now uses the combined intent+code as input, and the fix as target
+    t5_df = df[['input_text', 'target_text']]
+    
+    t5_train, t5_test = train_test_split(t5_df, test_size=0.20, random_state=42)
+    
+    t5_train.to_csv("./processed_data/t5/t5_train.csv", index=False)
+    t5_test.to_csv("./processed_data/t5/t5_test.csv", index=False)
+    print(f"   -> CodeT5 Train: {len(t5_train)} pairs")
+    print(f"   -> CodeT5 Test: {len(t5_test)} pairs")
 
-rf_train = prepare_for_classifier(train_df)
-rf_test  = prepare_for_classifier(test_df)
 
-# Save Files
-rf_train.to_csv("rf_train_dataset.csv", index=False)
-rf_test.to_csv("rf_test_dataset.csv", index=False)
-print("\n[Random Forest] Created 'rf_train_dataset.csv' & 'rf_test_dataset.csv'")
-print(f"   - Training Samples: {len(rf_train)} (Half buggy, half clean)")
+    # ==========================================
+    # 2. PREPARE RANDOM FOREST DATA (Buggy=1, Clean=0)
+    # ==========================================
+    print("\n📦 Splitting data for Random Forest (Classifier)...")
+    
+    # Create Buggy rows (Label = 1)
+    buggy_df = pd.DataFrame({
+        'code': df['input_text'],
+        'is_buggy': 1
+    })
+    
+    # Create Clean rows (Label = 0)
+    clean_df = pd.DataFrame({
+        'code': df['target_text'],
+        'is_buggy': 0
+    })
+    
+    # Combine them into one big classification dataset
+    rf_df = pd.concat([buggy_df, clean_df], ignore_index=True)
+    
+    # Shuffle the dataset so buggy and clean are mixed up
+    rf_df = rf_df.sample(frac=1, random_state=42).reset_index(drop=True)
+    
+    rf_train, rf_test = train_test_split(rf_df, test_size=0.20, random_state=42)
+    
+    rf_train.to_csv("./processed_data/rf/rf_train.csv", index=False)
+    rf_test.to_csv("./processed_data/rf/rf_test.csv", index=False)
+    print(f"   -> RF Train: {len(rf_train)} snippets")
+    print(f"   -> RF Test: {len(rf_test)} snippets")
 
-# NOW FOR CODET5................
-# Goal: Columns ['input_text', 'target_text']
-# This is to make it treat code fixing as a translation task, where input is the buggy code and output is the fixed code.
+    print("\n🎉 ALL DATA PREPARED SUCCESSFULLY!")
+    print("You are now ready to run your training scripts.")
 
-def prepare_for_codet5(dataframe):
-    # Just rename columns to standard huggingface format
-    new_df = dataframe.rename(columns={'buggy_code': 'input_text', 'fixed_code': 'target_text'})
-    return new_df
-
-t5_train = prepare_for_codet5(train_df)
-t5_test  = prepare_for_codet5(test_df)
-
-# Save Files
-t5_train.to_csv("t5_train_dataset.csv", index=False)
-t5_test.to_csv("t5_test_dataset.csv", index=False)
-print("\n[CodeT5] Created 't5_train_dataset.csv' & 't5_test_dataset.csv'")
-print(f"   - Training Pairs: {len(t5_train)}")
+if __name__ == "__main__":
+    process_and_split_data()
