@@ -6,3 +6,4 @@ results
 saved_model
 .env
 .codex
+__pycache__
