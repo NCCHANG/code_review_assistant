@@ -1,6 +1,32 @@
 import pandas as pd
 import sys
+import io
+import re
+import tokenize
 from sklearn.model_selection import train_test_split
+
+def strip_python_comments(code):
+    if pd.isna(code):
+        return code
+
+    code = str(code)
+
+    try:
+        tokens = tokenize.generate_tokens(io.StringIO(code).readline)
+        rebuilt = []
+        for token_type, token_string, _, _, _ in tokens:
+            if token_type == tokenize.COMMENT:
+                continue
+            rebuilt.append((token_type, token_string))
+        cleaned = tokenize.untokenize(rebuilt)
+    except (tokenize.TokenError, IndentationError):
+        cleaned_lines = []
+        for line in code.splitlines():
+            cleaned_lines.append(re.sub(r"\s+#.*$", "", line))
+        cleaned = "\n".join(cleaned_lines)
+
+    cleaned_lines = [line.rstrip() for line in cleaned.splitlines()]
+    return "\n".join(cleaned_lines).strip()
 
 # Load dataset
 try:
@@ -8,6 +34,10 @@ try:
     print(f"Loaded Master Dataset: {len(df)} pairs")
 except FileNotFoundError:
     sys.exit(-1)
+
+# Remove code comments before splitting so both downstream datasets see the same cleaned code.
+for column in ["buggy_code", "fixed_code"]:
+    df[column] = df[column].apply(strip_python_comments)
 
 # Splitting dataset
 train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
