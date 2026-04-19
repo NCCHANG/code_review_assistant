@@ -2,7 +2,7 @@ import os
 import sys
 import pandas as pd
 import torch
-from transformers import RobertaTokenizer, T5ForConditionalGeneration, Seq2SeqTrainingArguments, Seq2SeqTrainer, DataCollatorForSeq2Seq
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Seq2SeqTrainingArguments, Seq2SeqTrainer, DataCollatorForSeq2Seq
 from datasets import Dataset
 
 # path of the current script
@@ -12,7 +12,7 @@ try:
     train_df = pd.read_csv("datasets/t5_train_dataset.csv")
     test_df = pd.read_csv("datasets/t5_test_dataset.csv")
 except FileNotFoundError as e:
-    print("Error: Error in finding training/testing dataset for Random Forest.")
+    print("Error: Error in finding training/testing dataset for CodeT5.")
     print(f"Error details: {e}")
     exit()
 
@@ -21,6 +21,7 @@ print(f"Train size: {len(train_df)}")
 print(f"Test size: {len(test_df)}")
 print(f"Sample Input: {train_df.iloc[0]['input_text']}")
 print(f"Sample Target: {train_df.iloc[0]['target_text']}")
+print(f"Sample Intention: {train_df.iloc[0]['intention']}")
 
 # Convert to Hugging Face Dataset
 train_dataset = Dataset.from_pandas(train_df)
@@ -28,9 +29,10 @@ test_dataset = Dataset.from_pandas(test_df)
 
 print("Loading model and tokenizer...")
 model_name = "Salesforce/codet5-base"
+
 try:
-    tokenizer = RobertaTokenizer.from_pretrained(model_name)
-    model = T5ForConditionalGeneration.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 except Exception as e:
     print(f"Error loading model {model_name}: {e}")
     sys.exit(1)
@@ -61,11 +63,8 @@ def preprocess_function(examples):
     targets = [str(code) for code in examples["target_text"]]
     
     model_inputs = tokenizer(inputs, max_length=max_input_length, padding="max_length", truncation=True)
-    
-    # Process targets
-    with tokenizer.as_target_tokenizer():
-        labels = tokenizer(targets, max_length=max_target_length, padding="max_length", truncation=True)
-    
+    labels = tokenizer(text_target=targets, max_length=max_target_length, padding="max_length", truncation=True)
+
     model_inputs["labels"] = labels["input_ids"]
     return model_inputs
 
