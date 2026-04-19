@@ -5,21 +5,18 @@ from sklearn.metrics import accuracy_score, classification_report
 from joblib import dump
 import sys
 import os
+from rf_model_utils import tokenizer
 
 # Get the directory where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Add the script directory to sys.path to find model_utils if running from root
-if script_dir not in sys.path:
-    sys.path.append(script_dir)
-
-from rf_model_utils import tokenizer
 
 try:
-    train_df = pd.read_csv(os.path.join(script_dir, "rf_train_dataset.csv"))
-    test_df = pd.read_csv(os.path.join(script_dir, "rf_test_dataset.csv"))
-except FileNotFoundError:
+    train_df = pd.read_csv("datasets/rf_train_dataset.csv")
+    test_df = pd.read_csv("datasets/rf_test_dataset.csv")
+except FileNotFoundError as e:
     print("Error: Error in finding training/testing dataset for Random Forest.")
+    print(f"Error details: {e}")
     exit()
 
 # pass the tokenizer to TfidfVectorizer and let it handle raw text.

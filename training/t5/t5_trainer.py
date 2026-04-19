@@ -8,18 +8,13 @@ from datasets import Dataset
 # path of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 # load dataset from the same directory
-train_csv = os.path.join(script_dir, "t5_train_dataset.csv")
-test_csv = os.path.join(script_dir, "t5_test_dataset.csv")
-
-print("Loading data...")
 try:
-    train_df = pd.read_csv(train_csv)
-    test_df = pd.read_csv(test_csv)
-except Exception as e:
-    print(f"Error loading datasets: {e}")
-    print("Please ensure the dataset CSV files are in the same directory as this script.")
-    sys.exit(1)
-print("data loaded")
+    train_df = pd.read_csv("datasets/t5_train_dataset.csv")
+    test_df = pd.read_csv("datasets/t5_test_dataset.csv")
+except FileNotFoundError as e:
+    print("Error: Error in finding training/testing dataset for Random Forest.")
+    print(f"Error details: {e}")
+    exit()
 
 # Debug: Print sample
 print(f"Train size: {len(train_df)}")
