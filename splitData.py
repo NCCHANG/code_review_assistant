@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 
 # Load dataset
 try:
-    df = pd.read_csv("synthetic_python_bugs.csv")
+    df = pd.read_csv("datasets/code_bug_fix_pairs.csv")
     print(f"Loaded Master Dataset: {len(df)} pairs")
 except FileNotFoundError:
     sys.exit(-1)
@@ -38,8 +38,8 @@ rf_train = prepare_for_classifier(train_df)
 rf_test  = prepare_for_classifier(test_df)
 
 # Save Files
-rf_train.to_csv("rf_train_dataset.csv", index=False)
-rf_test.to_csv("rf_test_dataset.csv", index=False)
+rf_train.to_csv("datasets/rf_train_dataset.csv", index=False)
+rf_test.to_csv("datasets/rf_test_dataset.csv", index=False)
 print("\n[Random Forest] Created 'rf_train_dataset.csv' & 'rf_test_dataset.csv'")
 print(f"   - Training Samples: {len(rf_train)} (Half buggy, half clean)")
 
@@ -56,7 +56,8 @@ t5_train = prepare_for_codet5(train_df)
 t5_test  = prepare_for_codet5(test_df)
 
 # Save Files
-t5_train.to_csv("t5_train_dataset.csv", index=False)
-t5_test.to_csv("t5_test_dataset.csv", index=False)
+t5_train.to_csv("datasets/t5_train_dataset.csv", index=False)
+t5_test.to_csv("datasets/t5_test_dataset.csv", index=False)
 print("\n[CodeT5] Created 't5_train_dataset.csv' & 't5_test_dataset.csv'")
 print(f"   - Training Pairs: {len(t5_train)}")
+print(f"   - Test Pairs: {len(t5_test)}")
