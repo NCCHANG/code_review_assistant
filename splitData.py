@@ -49,7 +49,7 @@ print(f"   - Training Samples: {len(rf_train)} (Half buggy, half clean)")
 
 def prepare_for_codet5(dataframe):
     # Just rename columns to standard huggingface format
-    new_df = dataframe.rename(columns={'buggy_code': 'input_text', 'fixed_code': 'target_text'})
+    new_df = dataframe.rename(columns={'buggy_code': 'input_text', 'fixed_code': 'target_text', 'commit_message': 'intention'})
     return new_df
 
 t5_train = prepare_for_codet5(train_df)
