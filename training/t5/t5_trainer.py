@@ -87,7 +87,8 @@ training_args = Seq2SeqTrainingArguments(
     predict_with_generate=True,
     logging_dir=os.path.join(script_dir, "logs"),
     logging_steps=100,
-    fp16=torch.cuda.is_available(), # Use mixed precision if CUDA available
+    use_cpu=True, # Force CPU because the local GPU 1070 is not supported by the installed PyTorch build
+    fp16=False,
     push_to_hub=False,
     dataloader_num_workers=0, # Windows safety: avoid multiprocessing spawn issues
 )
