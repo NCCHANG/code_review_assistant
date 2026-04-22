@@ -7,3 +7,4 @@ saved_model
 .env
 .vscode
 __pycache__
+.zip
