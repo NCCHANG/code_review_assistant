@@ -8,3 +8,4 @@ saved_model
 .vscode
 __pycache__
 .zip
+datasets/tssb_data_3M.zip

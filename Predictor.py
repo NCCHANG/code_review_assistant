@@ -36,17 +36,18 @@ class Predictor:
             print("Error: Model or vectorizer could not be loaded. Predictor will not function.")
 
     def predict(self, code_snippet: str, threshold=0.30):
-        # Pass raw code snippet (vectorizer handles tokenization)
         vectorized_code = self.vectorizer.transform([code_snippet])
-        
-        # Predict Probability
-        # Class 0 = Clean, Class 1 = Buggy
-        probability = self.model.predict_proba(vectorized_code)[0][1] 
-        
-        # Custom Thresholding (Default 0.35 to prioritize Recall)
-        prediction = 1 if probability >= threshold else 0
-        
-        return prediction, probability
+
+        proba = self.model.predict_proba(vectorized_code)[0]
+        classes = self.model.classes_
+
+        max_idx = proba.argmax()
+        predicted_class = classes[max_idx]
+        confidence = proba[max_idx]
+
+        if predicted_class == 'CLEAN' or confidence < threshold:
+            return False, confidence, None
+        return True, confidence, predicted_class
 
 if __name__ == "__main__":
     model, vectorizer = load_model()
@@ -62,11 +63,9 @@ if __name__ == "__main__":
         #         break
                 
         predictor = Predictor()
-        is_buggy, confidence = predictor.predict(user_input)
-        
-        if is_buggy == 1:
-            status = "BUGGY"
+        is_buggy, confidence, bug_type = predictor.predict(user_input)
+
+        if is_buggy:
+            print(f"Result: BUGGY — {bug_type} (Confidence: {confidence:.2%})")
         else:
-            status = "CLEAN"
-        
-        print(f"Result: {status} (Confidence its buggy: {confidence:.2%})")
+            print(f"Result: CLEAN (Confidence: {confidence:.2%})")

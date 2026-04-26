@@ -6,20 +6,19 @@ from joblib import dump
 import sys
 import os
 
-# Get the directory where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(script_dir))
 
-# Add the script directory to sys.path to find model_utils if running from root
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from rf_model_utils import tokenizer
 
 try:
-    train_df = pd.read_csv(os.path.join(script_dir, "rf_train_dataset.csv"))
-    test_df = pd.read_csv(os.path.join(script_dir, "rf_test_dataset.csv"))
+    train_df = pd.read_csv(os.path.join(project_root, "processed_data", "rf", "rf_train.csv"))
+    test_df = pd.read_csv(os.path.join(project_root, "processed_data", "rf", "rf_test.csv"))
 except FileNotFoundError:
-    print("Error: Error in finding training/testing dataset for Random Forest.")
+    print("Error: Dataset not found. Run splitData.py first to generate processed_data/rf/rf_train.csv and rf_test.csv.")
     exit()
 
 # pass the tokenizer to TfidfVectorizer and let it handle raw text.
@@ -35,10 +34,10 @@ vectorizer = TfidfVectorizer(
 
 print("vectorizing...")
 # vectorize use custom tokenizer and transform the raw code snippets into tfidf features
-train_X = vectorizer.fit_transform(train_df['code_snippet'])
-train_y = train_df['label']
-test_X = vectorizer.transform(test_df['code_snippet'])
-test_y = test_df['label']
+train_X = vectorizer.fit_transform(train_df['code'])
+train_y = train_df['bug_type']
+test_X = vectorizer.transform(test_df['code'])
+test_y = test_df['bug_type']
 print("vectorizing done")
 
 #TRAINING THE MODEL

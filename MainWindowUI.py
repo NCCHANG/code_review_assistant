@@ -160,7 +160,8 @@ class CodeAnalysisAssistant(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, "Warning", "Please enter some code to analyze.")
             return
         
-        # TODO: Implement code analysis logic here
+        # TODO: wire up predictor/repairer models and call:
+        # process_file_or_input(code, predictor_model, repairer_model, context=context)
         print("Code:", code)
         print("Context:", context)
         QtWidgets.QMessageBox.information(self, "Analysis", "Code analysis started!")

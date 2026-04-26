@@ -5,11 +5,10 @@ import torch
 from transformers import RobertaTokenizer, T5ForConditionalGeneration, Seq2SeqTrainingArguments, Seq2SeqTrainer, DataCollatorForSeq2Seq
 from datasets import Dataset
 
-# path of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
-# load dataset from the same directory
-train_csv = os.path.join(script_dir, "t5_train_dataset.csv")
-test_csv = os.path.join(script_dir, "t5_test_dataset.csv")
+project_root = os.path.dirname(os.path.dirname(script_dir))
+train_csv = os.path.join(project_root, "processed_data", "t5", "t5_train.csv")
+test_csv = os.path.join(project_root, "processed_data", "t5", "t5_test.csv")
 
 print("Loading data...")
 try:
@@ -83,19 +82,20 @@ output_dir = os.path.join(script_dir, "results")
 training_args = Seq2SeqTrainingArguments(
     output_dir=output_dir,
     eval_strategy="steps",
-    eval_steps=1000, # Evaluate less frequently to save time
+    eval_steps=200,
     learning_rate=2e-5,
-    per_device_train_batch_size=4, # Conservative batch size
+    per_device_train_batch_size=4,
     per_device_eval_batch_size=4,
     weight_decay=0.01,
     save_total_limit=2,
-    num_train_epochs=1, # 1 Epoch is usually enough for a demo on this data size
+    num_train_epochs=1,
     predict_with_generate=True,
     logging_dir=os.path.join(script_dir, "logs"),
-    logging_steps=100,
-    fp16=torch.cuda.is_available(), # Use mixed precision if CUDA available
+    logging_steps=50,
+    fp16=False,
+    no_cuda=True,
     push_to_hub=False,
-    dataloader_num_workers=0, # Windows safety: avoid multiprocessing spawn issues
+    dataloader_num_workers=0,
 )
 
 data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
