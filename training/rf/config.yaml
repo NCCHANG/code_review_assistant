@@ -1,0 +1,38 @@
+tfidf:
+  max_features: 20000
+  ngram_range: [1, 2]
+  sublinear_tf: true
+  min_df: 2
+
+ast_features:
+  enabled: true
+  n_features: 32  # len(AST_FEATURE_NAMES) in rf_model_utils.py
+
+random_forest:
+  n_estimators: 200
+  class_weight: balanced
+  random_state: 42
+
+split:
+  test_size: 0.2
+  stratify: true
+  random_state: 42
+
+labels:
+  0: Clean
+  1: Wrong Binary Operator
+  2: Variable Misuse
+  3: Swapped Operand
+
+dataset:
+  name: claudios/cubert_ETHPy150Open
+  # HuggingFace config names include the _datasets suffix
+  tasks:
+    - wrong_binary_operator_datasets
+    - variable_misuse_datasets
+    - swapped_operands_datasets
+  # The validation split is named 'dev', not 'validation'
+  splits:
+    - train
+    - dev
+    - test
