@@ -57,7 +57,7 @@ import torch
 from torch.optim import AdamW
 from torch.utils.data import DataLoader, Dataset
 from transformers import (
-    RobertaTokenizer,
+    AutoTokenizer,
     T5ForConditionalGeneration,
     get_linear_schedule_with_warmup,
 )
@@ -519,7 +519,7 @@ def train():
     logging.info(f"Train rows: {len(train_df)} | Val rows: {len(val_df)}")
 
     logging.info(f"Loading {CONFIG['model_name']} ...")
-    tokenizer = RobertaTokenizer.from_pretrained(CONFIG["model_name"])
+    tokenizer = AutoTokenizer.from_pretrained(CONFIG["model_name"])
     model = T5ForConditionalGeneration.from_pretrained(CONFIG["model_name"])
     model.to(device)
 
