@@ -508,7 +508,8 @@ def train():
     start_time = time.time()
 
     _set_seeds(CONFIG["seed"])
-    device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logging.info(f"Using device: {device}")
     os.makedirs(CONFIG["checkpoint_dir"], exist_ok=True)
     os.makedirs(CONFIG["save_dir"], exist_ok=True)
 
