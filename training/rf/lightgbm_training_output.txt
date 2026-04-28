@@ -1,0 +1,21 @@
+Accuracy: 0.6550 (65.50%)
+
+Classification Report:
+                       precision    recall  f1-score   support
+
+                Clean     0.7028    0.5243    0.6005     15707
+Wrong Binary Operator     0.7007    0.7735    0.7353      6359
+      Variable Misuse     0.5756    0.7577    0.6542      9648
+      Swapped Operand     0.6912    0.7492    0.7190      3286
+
+             accuracy                         0.6550     35000
+            macro avg     0.6676    0.7012    0.6773     35000
+         weighted avg     0.6662    0.6550    0.6509     35000
+
+
+Confusion Matrix (rows = actual, cols = predicted):
+                                       Clean Wrong Binary Operator       Variable Misuse       Swapped Operand
+                 Clean                  8235                  1546                  5330                   596
+ Wrong Binary Operator                   909                  4919                    46                   485
+       Variable Misuse                  2297                    22                  7310                    19
+       Swapped Operand                   277                   533                    14                  2462
