@@ -1,0 +1,100 @@
+09:19:18 [INFO] Using device: cuda
+09:19:18 [INFO] Train rows: 10000 | Val rows: 1000
+09:19:18 [INFO] Loading tokenizer and model ...
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+09:19:19 [INFO] Parameters: 60,492,288
+09:19:19 [INFO] --- EPOCH 1/6 ---
+09:19:20 [INFO] Epoch 1 | Step 0/625 | Loss: 3.2329 | ETA: 0.5h
+09:19:40 [INFO] Epoch 1 | Step 50/625 | Loss: 1.6402 | ETA: 0.4h
+09:20:02 [INFO] Epoch 1 | Step 100/625 | Loss: 0.6424 | ETA: 0.4h
+09:20:24 [INFO] Epoch 1 | Step 150/625 | Loss: 0.4443 | ETA: 0.4h
+09:20:45 [INFO] Epoch 1 | Step 200/625 | Loss: 0.6168 | ETA: 0.4h
+09:21:06 [INFO] Epoch 1 | Step 250/625 | Loss: 0.4328 | ETA: 0.4h
+09:21:27 [INFO] Epoch 1 | Step 300/625 | Loss: 0.6211 | ETA: 0.4h
+09:21:49 [INFO] Epoch 1 | Step 350/625 | Loss: 0.5763 | ETA: 0.4h
+09:22:10 [INFO] Epoch 1 | Step 400/625 | Loss: 0.5023 | ETA: 0.4h
+09:22:31 [INFO] Epoch 1 | Step 450/625 | Loss: 0.3850 | ETA: 0.4h
+09:22:52 [INFO] Epoch 1 | Step 500/625 | Loss: 0.5164 | ETA: 0.4h
+09:23:13 [INFO] Epoch 1 | Step 550/625 | Loss: 0.5537 | ETA: 0.4h
+09:23:35 [INFO] Epoch 1 | Step 600/625 | Loss: 0.4799 | ETA: 0.4h
+09:24:31 [INFO] Epoch 1 done | Train Loss: 0.7364 | Val Loss: 0.7417 | Exact Match: 1.2%
+09:24:32 [INFO] Best model saved (val_loss=0.7417)
+09:24:32 [INFO] --- EPOCH 2/6 ---
+09:24:32 [INFO] Epoch 2 | Step 0/625 | Loss: 0.4256 | ETA: 0.4h
+09:24:53 [INFO] Epoch 2 | Step 50/625 | Loss: 0.5808 | ETA: 0.4h
+09:25:15 [INFO] Epoch 2 | Step 100/625 | Loss: 0.6266 | ETA: 0.4h
+09:25:36 [INFO] Epoch 2 | Step 150/625 | Loss: 0.6245 | ETA: 0.4h
+09:25:57 [INFO] Epoch 2 | Step 200/625 | Loss: 0.7042 | ETA: 0.4h
+09:26:18 [INFO] Epoch 2 | Step 250/625 | Loss: 0.6497 | ETA: 0.4h
+09:26:39 [INFO] Epoch 2 | Step 300/625 | Loss: 0.5694 | ETA: 0.4h
+09:27:00 [INFO] Epoch 2 | Step 350/625 | Loss: 0.4179 | ETA: 0.4h
+09:27:22 [INFO] Epoch 2 | Step 400/625 | Loss: 0.3722 | ETA: 0.4h
+09:27:43 [INFO] Epoch 2 | Step 450/625 | Loss: 0.6140 | ETA: 0.3h
+09:28:04 [INFO] Epoch 2 | Step 500/625 | Loss: 0.5650 | ETA: 0.3h
+09:28:25 [INFO] Epoch 2 | Step 550/625 | Loss: 0.5695 | ETA: 0.3h
+09:28:46 [INFO] Epoch 2 | Step 600/625 | Loss: 0.6044 | ETA: 0.3h
+09:29:43 [INFO] Epoch 2 done | Train Loss: 0.4890 | Val Loss: 0.7267 | Exact Match: 1.8%
+09:29:44 [INFO] Best model saved (val_loss=0.7267)
+09:29:44 [INFO] --- EPOCH 3/6 ---
+09:29:45 [INFO] Epoch 3 | Step 0/625 | Loss: 0.3373 | ETA: 0.3h
+09:30:06 [INFO] Epoch 3 | Step 50/625 | Loss: 0.2543 | ETA: 0.3h
+09:30:27 [INFO] Epoch 3 | Step 100/625 | Loss: 0.3350 | ETA: 0.3h
+09:30:48 [INFO] Epoch 3 | Step 150/625 | Loss: 0.4625 | ETA: 0.3h
+09:31:09 [INFO] Epoch 3 | Step 200/625 | Loss: 0.2953 | ETA: 0.3h
+09:31:30 [INFO] Epoch 3 | Step 250/625 | Loss: 0.5601 | ETA: 0.3h
+09:31:52 [INFO] Epoch 3 | Step 300/625 | Loss: 0.3173 | ETA: 0.3h
+09:32:13 [INFO] Epoch 3 | Step 350/625 | Loss: 0.4575 | ETA: 0.3h
+09:32:34 [INFO] Epoch 3 | Step 400/625 | Loss: 0.3889 | ETA: 0.3h
+09:32:55 [INFO] Epoch 3 | Step 450/625 | Loss: 0.3351 | ETA: 0.3h
+09:33:16 [INFO] Epoch 3 | Step 500/625 | Loss: 0.4958 | ETA: 0.3h
+09:33:38 [INFO] Epoch 3 | Step 550/625 | Loss: 0.4220 | ETA: 0.3h
+09:33:59 [INFO] Epoch 3 | Step 600/625 | Loss: 0.4589 | ETA: 0.3h
+09:34:55 [INFO] Epoch 3 done | Train Loss: 0.4279 | Val Loss: 0.7185 | Exact Match: 3.1%
+09:34:57 [INFO] Best model saved (val_loss=0.7185)
+09:34:57 [INFO] --- EPOCH 4/6 ---
+09:34:57 [INFO] Epoch 4 | Step 0/625 | Loss: 0.3816 | ETA: 0.3h
+09:35:18 [INFO] Epoch 4 | Step 50/625 | Loss: 0.3021 | ETA: 0.3h
+09:35:40 [INFO] Epoch 4 | Step 100/625 | Loss: 0.2246 | ETA: 0.2h
+09:36:01 [INFO] Epoch 4 | Step 150/625 | Loss: 0.4869 | ETA: 0.2h
+09:36:22 [INFO] Epoch 4 | Step 200/625 | Loss: 0.2474 | ETA: 0.2h
+09:36:43 [INFO] Epoch 4 | Step 250/625 | Loss: 0.3535 | ETA: 0.2h
+09:37:04 [INFO] Epoch 4 | Step 300/625 | Loss: 0.5133 | ETA: 0.2h
+09:37:25 [INFO] Epoch 4 | Step 350/625 | Loss: 0.2970 | ETA: 0.2h
+09:37:47 [INFO] Epoch 4 | Step 400/625 | Loss: 0.3305 | ETA: 0.2h
+09:38:08 [INFO] Epoch 4 | Step 450/625 | Loss: 0.4928 | ETA: 0.2h
+09:38:29 [INFO] Epoch 4 | Step 500/625 | Loss: 0.2990 | ETA: 0.2h
+09:38:50 [INFO] Epoch 4 | Step 550/625 | Loss: 0.3266 | ETA: 0.2h
+09:39:12 [INFO] Epoch 4 | Step 600/625 | Loss: 0.6393 | ETA: 0.2h
+09:40:07 [INFO] Epoch 4 done | Train Loss: 0.3870 | Val Loss: 0.7288 | Exact Match: 3.4%
+09:40:07 [INFO] --- EPOCH 5/6 ---
+09:40:08 [INFO] Epoch 5 | Step 0/625 | Loss: 0.2982 | ETA: 0.2h
+09:40:29 [INFO] Epoch 5 | Step 50/625 | Loss: 0.4814 | ETA: 0.2h
+09:40:50 [INFO] Epoch 5 | Step 100/625 | Loss: 0.2159 | ETA: 0.2h
+09:41:12 [INFO] Epoch 5 | Step 150/625 | Loss: 0.2968 | ETA: 0.2h
+09:41:33 [INFO] Epoch 5 | Step 200/625 | Loss: 0.6408 | ETA: 0.1h
+09:41:54 [INFO] Epoch 5 | Step 250/625 | Loss: 0.3628 | ETA: 0.1h
+09:42:15 [INFO] Epoch 5 | Step 300/625 | Loss: 0.3305 | ETA: 0.1h
+09:42:36 [INFO] Epoch 5 | Step 350/625 | Loss: 0.2220 | ETA: 0.1h
+09:42:57 [INFO] Epoch 5 | Step 400/625 | Loss: 0.1995 | ETA: 0.1h
+09:43:19 [INFO] Epoch 5 | Step 450/625 | Loss: 0.4376 | ETA: 0.1h
+09:43:40 [INFO] Epoch 5 | Step 500/625 | Loss: 0.1784 | ETA: 0.1h
+09:44:01 [INFO] Epoch 5 | Step 550/625 | Loss: 0.2897 | ETA: 0.1h
+09:44:22 [INFO] Epoch 5 | Step 600/625 | Loss: 0.3155 | ETA: 0.1h
+09:45:19 [INFO] Epoch 5 done | Train Loss: 0.3585 | Val Loss: 0.7364 | Exact Match: 3.8%
+09:45:19 [INFO] --- EPOCH 6/6 ---
+09:45:20 [INFO] Epoch 6 | Step 0/625 | Loss: 0.2216 | ETA: 0.1h
+09:45:41 [INFO] Epoch 6 | Step 50/625 | Loss: 0.2810 | ETA: 0.1h
+09:46:02 [INFO] Epoch 6 | Step 100/625 | Loss: 0.1704 | ETA: 0.1h
+09:46:23 [INFO] Epoch 6 | Step 150/625 | Loss: 0.2190 | ETA: 0.1h
+09:46:44 [INFO] Epoch 6 | Step 200/625 | Loss: 0.2569 | ETA: 0.1h
+09:47:05 [INFO] Epoch 6 | Step 250/625 | Loss: 0.3165 | ETA: 0.1h
+09:47:27 [INFO] Epoch 6 | Step 300/625 | Loss: 0.3051 | ETA: 0.0h
+09:47:48 [INFO] Epoch 6 | Step 350/625 | Loss: 0.3680 | ETA: 0.0h
+09:48:09 [INFO] Epoch 6 | Step 400/625 | Loss: 0.2460 | ETA: 0.0h
+09:48:31 [INFO] Epoch 6 | Step 450/625 | Loss: 0.3092 | ETA: 0.0h
+09:48:52 [INFO] Epoch 6 | Step 500/625 | Loss: 0.2678 | ETA: 0.0h
+09:49:13 [INFO] Epoch 6 | Step 550/625 | Loss: 0.1348 | ETA: 0.0h
+09:49:34 [INFO] Epoch 6 | Step 600/625 | Loss: 0.3468 | ETA: 0.0h
+09:50:31 [INFO] Epoch 6 done | Train Loss: 0.3403 | Val Loss: 0.7385 | Exact Match: 4.4%
+09:50:31 [INFO] Training complete! Best val loss: 0.7185

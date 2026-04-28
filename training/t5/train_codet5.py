@@ -519,7 +519,7 @@ def train():
     logging.info(f"Train rows: {len(train_df)} | Val rows: {len(val_df)}")
 
     logging.info(f"Loading {CONFIG['model_name']} ...")
-    tokenizer = AutoTokenizer.from_pretrained(CONFIG["model_name"])
+    tokenizer = AutoTokenizer.from_pretrained(CONFIG["model_name"], use_fast=False)
     model = T5ForConditionalGeneration.from_pretrained(CONFIG["model_name"])
     model.to(device)
 
