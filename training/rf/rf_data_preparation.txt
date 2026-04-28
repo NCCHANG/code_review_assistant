@@ -1,0 +1,51 @@
+**Download Data**
+
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+  [swapped_operands_datasets] test: 130,972 records
+  -> 393,336 usable records
+
+Before deduplication:
+  Label 0 (Clean): 1,154,485 (50.0%)
+  Label 1 (Wrong Binary Operator): 380,504 (16.5%)
+  Label 2 (Variable Misuse): 577,313 (25.0%)
+  Label 3 (Swapped Operand): 196,668 (8.5%)
+  Total: 2,308,970
+
+After deduplication (clean examples deduplicated):
+  Label 0 (Clean): 939,851 (44.9%)
+  Label 1 (Wrong Binary Operator): 380,504 (18.2%)
+  Label 2 (Variable Misuse): 577,313 (27.6%)
+  Label 3 (Swapped Operand): 196,668 (9.4%)
+  Total: 2,094,336
+
+After stratified sampling (target=175,000):
+  Label 0 (Clean): 78,533 (44.9%)
+  Label 1 (Wrong Binary Operator): 31,794 (18.2%)
+  Label 2 (Variable Misuse): 48,240 (27.6%)
+  Label 3 (Swapped Operand): 16,433 (9.4%)
+  Total: 175,000
+---------------------------------------------------------------------------------------------------------------------------------------------------
+**SPLIT DATA**
+
+Loaded 175,000 records from C:\Users\User\OneDrive\Desktop\codeee\Fyp\code_review_assistant\training\rf\data\merged_cubert_dataset.csv
+
+Full dataset (175,000 samples):
+  Label 0 (Clean): 78,533 (44.9%)
+  Label 1 (Wrong Binary Operator): 31,794 (18.2%)
+  Label 2 (Variable Misuse): 48,240 (27.6%)
+  Label 3 (Swapped Operand): 16,433 (9.4%)
+
+Train split (140,000 samples):
+  Label 0 (Clean): 62,826 (44.9%)
+  Label 1 (Wrong Binary Operator): 25,435 (18.2%)
+  Label 2 (Variable Misuse): 38,592 (27.6%)
+  Label 3 (Swapped Operand): 13,147 (9.4%)
+
+Test split (35,000 samples):
+  Label 0 (Clean): 15,707 (44.9%)
+  Label 1 (Wrong Binary Operator): 6,359 (18.2%)
+  Label 2 (Variable Misuse): 9,648 (27.6%)
+  Label 3 (Swapped Operand): 3,286 (9.4%)
+
+Saved: C:\Users\User\OneDrive\Desktop\codeee\Fyp\code_review_assistant\training\rf\data\train.csv (140,000 rows)
+Saved: C:\Users\User\OneDrive\Desktop\codeee\Fyp\code_review_assistant\training\rf\data\test.csv  (35,000 rows)
