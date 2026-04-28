@@ -4,3 +4,6 @@ venv
 *.csv
 results
 .env
+__pycache__/
+*.pyc
+*.pyo
