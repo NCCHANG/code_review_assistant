@@ -13,7 +13,11 @@
       "Bash(.venv/Scripts/python.exe Repairer.py)",
       "Bash(git rebase *)",
       "Bash(git rm *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(python3 -c ' *)",
+      "Bash(grep \"\\\\.py$\")",
+      "Bash(python3)",
+      "Bash(awk '{print $5, $9}')"
     ]
   }
 }
