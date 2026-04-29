@@ -7,3 +7,4 @@ results
 __pycache__/
 *.pyc
 *.pyo
+training/t5/saved_model/model.safetensors
