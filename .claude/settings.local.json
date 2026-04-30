@@ -17,7 +17,13 @@
       "Bash(python3 -c ' *)",
       "Bash(grep \"\\\\.py$\")",
       "Bash(python3)",
-      "Bash(awk '{print $5, $9}')"
+      "Bash(awk '{print $5, $9}')",
+      "WebSearch",
+      "WebFetch(domain:www.researchgate.net)",
+      "WebFetch(domain:arxiv.org)",
+      "WebFetch(domain:www.semanticscholar.org)",
+      "WebFetch(domain:journal.uinjkt.ac.id)",
+      "WebFetch(domain:peerj.com)"
     ]
   }
 }
