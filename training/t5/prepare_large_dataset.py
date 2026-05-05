@@ -18,7 +18,7 @@ DATA_DIR  = "training/t5/data"
 RAW_DIR   = os.path.join(DATA_DIR, "raw/ctssb_data_1M")
 OUT_TRAIN = os.path.join(DATA_DIR, "train_50k.csv")
 OUT_VAL   = os.path.join(DATA_DIR, "val_5k.csv")
-MAX_CHARS = 400
+MAX_CHARS = 600  # higher limit to accommodate context lines around the buggy line
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -31,15 +31,19 @@ def md5(s):
 
 
 def extract_from_diff(diff):
-    before, after = [], []
+    input_parts, before, after = [], [], []
     for line in diff.splitlines():
         if line.startswith(("---", "+++", "@@")):
             continue
         if line.startswith("-"):
-            before.append(line[1:])
+            before.append(line[1:].rstrip())
+            input_parts.append(line[1:].rstrip())  # buggy line goes into input
         elif line.startswith("+"):
-            after.append(line[1:])
-    return "\n".join(before).strip(), "\n".join(after).strip()
+            after.append(line[1:].rstrip())         # fixed line is the target only
+        else:
+            # unified diff context line (starts with ' ')
+            input_parts.append(line[1:].rstrip() if line.startswith(" ") else line.rstrip())
+    return "\n".join(input_parts).strip(), "\n".join(before).strip(), "\n".join(after).strip()
 
 
 def load_and_filter():
@@ -66,17 +70,17 @@ def load_and_filter():
                 if not obj.get("likely_bug"):
                     continue
 
-                buggy, fixed = extract_from_diff(obj.get("diff", ""))
+                input_with_context, buggy, fixed = extract_from_diff(obj.get("diff", ""))
                 if not buggy or not fixed or buggy == fixed:
                     continue
-                if len(buggy) > MAX_CHARS:
+                if len(input_with_context) > MAX_CHARS:
                     continue
 
                 h = md5(buggy)
                 if h in seen:
                     continue
                 seen.add(h)
-                rows.append({"input_text": buggy, "target_text": fixed,
+                rows.append({"input_text": input_with_context, "target_text": fixed,
                              "sstub_pattern": sp, "_hash": h})
 
     logging.info(f"Total usable rows after filtering: {len(rows)}")

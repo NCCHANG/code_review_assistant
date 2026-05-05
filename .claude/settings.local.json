@@ -23,7 +23,11 @@
       "WebFetch(domain:arxiv.org)",
       "WebFetch(domain:www.semanticscholar.org)",
       "WebFetch(domain:journal.uinjkt.ac.id)",
-      "WebFetch(domain:peerj.com)"
+      "WebFetch(domain:peerj.com)",
+      "Bash(zcat \"/media/hxuan/1tb hdd linux/coding/fyp/code_review_assistant/training/t5/data/raw/ctssb_data_1M/file-0.jsonl.gz\")",
+      "Bash(python3 -c \"import sys,json; [print\\(json.dumps\\(json.loads\\(l\\), indent=2\\)\\) for l in sys.stdin]\")",
+      "Bash(python3 -c \"import sys,csv; r=csv.DictReader\\(sys.stdin\\); [print\\('input_text:', row.get\\('input_text',''\\), '\\\\ntarget_text:', row.get\\('target_text',''\\), '\\\\nsstub_pattern:', row.get\\('sstub_pattern',''\\), '\\\\n---'\\) for row in r]\")",
+      "Bash(python3 -)"
     ]
   }
 }
