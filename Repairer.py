@@ -84,6 +84,7 @@ class Repairer:
             return response.choices[0].message.content.strip()
         except Exception as e:
             print(f"\n[!] Groq Failed ({e}). Failed to generate feedback.")
+            return f"[Groq Unavailable] Could not generate feedback: {e}"
 
 if __name__ == "__main__":
     code = "def add(a, b):\n    return a - b"
