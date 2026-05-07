@@ -9,3 +9,4 @@ __pycache__/
 *.pyo
 training/t5/saved_model/model.safetensors
 user_data.db
+.claude/settings.local.json
