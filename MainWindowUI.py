@@ -109,16 +109,6 @@ class MainWindowUI(QtWidgets.QMainWindow):
         self.code_input.textChanged.connect(self._update_analysis_button_state)
         main_layout.addWidget(self.code_input)
         
-        # Context section
-        context_label = QtWidgets.QLabel("Provide Context/Description")
-        context_label.setFont(upload_label_font)
-        main_layout.addWidget(context_label)
-        
-        self.context_input = QtWidgets.QTextEdit()
-        self.context_input.setPlaceholderText("Describe what this code is supposed to do")
-        self.context_input.setMinimumHeight(100)
-        main_layout.addWidget(self.context_input)
-        
         # Action buttons
         button_layout = QtWidgets.QHBoxLayout()
         
@@ -159,11 +149,7 @@ class MainWindowUI(QtWidgets.QMainWindow):
     def _analyze_code(self):
         QtWidgets.QMessageBox.information(self, "Analysis", "Code analysis Started! Please Wait!")
         code = self.code_input.toPlainText()
-        context = self.context_input.toPlainText()
-        if context:
-            self.code_assistant.process_file_or_input(code, context)
-        else:            
-            self.code_assistant.process_file_or_input(code)
+        self.code_assistant.process_file_or_input(code)
         
         if not code.strip():
             QtWidgets.QMessageBox.warning(self, "Warning", "Please enter some code to analyze.")
@@ -183,7 +169,6 @@ class MainWindowUI(QtWidgets.QMainWindow):
     
     def _clear_fields(self):
         self.code_input.clear()
-        self.context_input.clear()
     
     def _update_analysis_button_state(self):
         """

@@ -3,7 +3,6 @@ import sys
 import torch
 from transformers import RobertaTokenizer, T5ForConditionalGeneration
 from openai import OpenAI
-from google import genai
 from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file
@@ -11,8 +10,6 @@ load_dotenv()  # Load environment variables from .env file
 class Repairer:
     GROQ_KEY = os.getenv("GROQ_API_KEY")
     groq_client = None
-    GEMINI_KEY = os.getenv("GEMINI_API_KEY")
-    gemini_client = None
     def __init__(self):
         self._setup_AI_clients()
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -30,14 +27,6 @@ class Repairer:
         except Exception as e:
             print(f"Error initializing Groq client: {e}")
             self.groq_client = None
-        
-        #Setting up gemini GenAI Client
-        try:
-            self.gemini_client = genai.Client(api_key=self.GEMINI_KEY)
-            print("Gemini client initialized.")
-        except Exception as e:
-            print(f"Error initializing Gemini GenAI client: {e}")
-            self.gemini_client = None
     
     def _setup_model(self):
         self.base_model_name = "Salesforce/codet5-base"
@@ -56,12 +45,8 @@ class Repairer:
             print(f"Error loading model: {e}")
             sys.exit(1)
     
-    def fix(self, buggy_code: str, intention=""):
-        # Prefix as used in training
-        if intention != "":
-            input_text = f"fix intent: {str(intention).strip()} code: {buggy_code}"
-        else:
-            input_text = "fix: " + buggy_code
+    def fix(self, buggy_code: str, ):
+        input_text = buggy_code
         
         # Tokenize
         inputs = self.tokenizer(input_text, return_tensors="pt").input_ids
@@ -87,15 +72,6 @@ class Repairer:
         Analysis: ...
         Reasoning: ...
         """
-
-        try:
-            response = self.gemini_client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-            )
-            return response.text.strip()
-        except Exception as e:
-            print(f"\n[!] Gemini Failed. Switching to Groq...")
 
         try:
             response = self.groq_client.chat.completions.create(
