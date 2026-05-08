@@ -388,7 +388,7 @@ class AnalyzeTab(QtWidgets.QWidget):
     def _build_classifier_section(self, bugginess: list) -> QtWidgets.QWidget:
         card, layout = self._section_card(
             "LightGBM Classifier — Bug Confidence Scores",
-            "Higher scores indicate higher likelihood of bugs",
+            "Score shows confidence in the predicted classification (Clean or Buggy)",
         )
         for entry in bugginess:
             func_name, is_buggy, confidence, line_no, _, bug_type = entry

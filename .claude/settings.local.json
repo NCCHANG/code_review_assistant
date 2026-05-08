@@ -27,7 +27,13 @@
       "Bash(zcat \"/media/hxuan/1tb hdd linux/coding/fyp/code_review_assistant/training/t5/data/raw/ctssb_data_1M/file-0.jsonl.gz\")",
       "Bash(python3 -c \"import sys,json; [print\\(json.dumps\\(json.loads\\(l\\), indent=2\\)\\) for l in sys.stdin]\")",
       "Bash(python3 -c \"import sys,csv; r=csv.DictReader\\(sys.stdin\\); [print\\('input_text:', row.get\\('input_text',''\\), '\\\\ntarget_text:', row.get\\('target_text',''\\), '\\\\nsstub_pattern:', row.get\\('sstub_pattern',''\\), '\\\\n---'\\) for row in r]\")",
-      "Bash(python3 -)"
+      "Bash(python3 -)",
+      "Bash(.venv/bin/python -c \"import bcrypt; print\\('bcrypt OK'\\)\")",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(.venv/bin/python -c \"import db; db.init_db\\(\\); print\\('db OK'\\)\")",
+      "Bash(.venv/bin/python -c \"import AuthManager; a = AuthManager.AuthManager\\(\\); print\\('AuthManager OK, is_logged_in:', a.is_logged_in\\(\\)\\)\")",
+      "Bash(.venv/bin/python -c ' *)",
+      "Bash(.venv/bin/python -c \"import py_compile; py_compile.compile\\('MainWindowUI.py', doraise=True\\); print\\('OK'\\)\")"
     ]
   }
 }
