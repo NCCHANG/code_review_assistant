@@ -11,6 +11,7 @@ results are automatically persisted to the database after each run.
 """
 
 import os
+import pathlib
 import sys
 
 from PySide6 import QtCore, QtGui, QtWidgets
@@ -21,80 +22,6 @@ from AuthManager import AuthManager
 from LoginUI import LoginUI
 from HistoryUI import HistoryUI
 from StaticEngine import StaticEngine
-
-# ── Shared stylesheet ────────────────────────────────────────────────────────
-
-_STYLE = """
-QMainWindow {
-    background-color: #f5f5f5;
-}
-QWidget#centralWidget {
-    background-color: #f5f5f5;
-}
-QLabel {
-    color: #333333;
-}
-QPushButton {
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-weight: bold;
-    border: none;
-}
-QPushButton#chooseFileBtn {
-    background-color: #0066ff;
-    color: white;
-}
-QPushButton#chooseFileBtn:hover {
-    background-color: #0052cc;
-}
-QPushButton#analyzeBtn {
-    background-color: #cccccc;
-    color: #666666;
-}
-QPushButton#analyzeBtn:hover {
-    background-color: #bbbbbb;
-}
-QPushButton#clearBtn {
-    background-color: white;
-    color: #333333;
-    border: 1px solid #cccccc;
-}
-QPushButton#clearBtn:hover {
-    background-color: #f0f0f0;
-}
-QPushButton#logoutBtn {
-    background-color: white;
-    color: #cc3300;
-    border: 1px solid #ffcccc;
-    font-size: 12px;
-    padding: 5px 12px;
-}
-QPushButton#logoutBtn:hover {
-    background-color: #fff5f5;
-}
-QTabWidget::pane {
-    border: 1px solid #e0e0e0;
-    background-color: #f5f5f5;
-}
-QTabBar::tab {
-    background: #e8e8e8;
-    color: #555555;
-    padding: 8px 24px;
-    border-radius: 4px 4px 0 0;
-    margin-right: 2px;
-    font-size: 13px;
-}
-QTabBar::tab:selected {
-    background: #f5f5f5;
-    color: #0066ff;
-    font-weight: bold;
-}
-QStatusBar {
-    background-color: #ebebeb;
-    color: #555555;
-    font-size: 12px;
-}
-"""
 
 # ── Analyse tab ───────────────────────────────────────────────────────────────
 
@@ -127,7 +54,7 @@ class AnalyzeTab(QtWidgets.QWidget):
         root.addWidget(title)
 
         subtitle = QtWidgets.QLabel("Upload or paste Python code for AI-powered analysis")
-        subtitle.setStyleSheet("color: #666666; font-size: 11px;")
+        subtitle.setObjectName("subtitle")
         root.addWidget(subtitle)
 
         label_font = QtGui.QFont()
@@ -148,15 +75,15 @@ class AnalyzeTab(QtWidgets.QWidget):
         file_row.addWidget(choose_btn)
 
         self.file_label = QtWidgets.QLabel("No file selected")
-        self.file_label.setStyleSheet("color: #888888; font-size: 12px; margin-left: 8px;")
+        self.file_label.setStyleSheet("color: #94a3b8; font-size: 12px; margin-left: 8px;")
         file_row.addWidget(self.file_label)
         file_row.addStretch()
         root.addLayout(file_row)
 
         # OR divider
         or_label = QtWidgets.QLabel("OR")
+        or_label.setObjectName("orLabel")
         or_label.setAlignment(QtCore.Qt.AlignCenter)
-        or_label.setStyleSheet("color: #999999; margin: 4px 0;")
         root.addWidget(or_label)
 
         # Code input
@@ -165,6 +92,7 @@ class AnalyzeTab(QtWidgets.QWidget):
         root.addWidget(paste_label)
 
         self.code_input = QtWidgets.QTextEdit()
+        self.code_input.setObjectName("codeInput")
         self.code_input.setPlaceholderText("# Enter your Python code here")
         self.code_input.setMinimumHeight(160)
         self.code_input.setFont(QtGui.QFont("Monospace", 11))
@@ -196,21 +124,18 @@ class AnalyzeTab(QtWidgets.QWidget):
         root.addWidget(results_label)
 
         self.results_scroll = QtWidgets.QScrollArea()
+        self.results_scroll.setObjectName("resultsScroll")
         self.results_scroll.setWidgetResizable(True)
         self.results_scroll.setMinimumHeight(300)
-        self.results_scroll.setStyleSheet(
-            "QScrollArea { border: 1px solid #e0e0e0; border-radius: 4px; "
-            "background: #f5f5f5; }"
-        )
         self.results_scroll.setWidget(self._make_placeholder())
         root.addWidget(self.results_scroll, 1)
 
     def _make_placeholder(self) -> QtWidgets.QWidget:
         w = QtWidgets.QWidget()
-        w.setStyleSheet("background: #f5f5f5;")
+        w.setStyleSheet("background: #f0f2f5;")
         lbl = QtWidgets.QLabel("Results will appear here after analysis…")
         lbl.setAlignment(QtCore.Qt.AlignCenter)
-        lbl.setStyleSheet("color: #999999; font-size: 13px;")
+        lbl.setStyleSheet("color: #94a3b8; font-size: 13px;")
         lay = QtWidgets.QVBoxLayout(w)
         lay.addStretch()
         lay.addWidget(lbl)
@@ -230,7 +155,7 @@ class AnalyzeTab(QtWidgets.QWidget):
                 self._current_file_path = path
                 self.file_label.setText(os.path.basename(path))
                 self.file_label.setStyleSheet(
-                    "color: #333333; font-size: 12px; margin-left: 8px;"
+                    "color: #1e293b; font-size: 12px; margin-left: 8px;"
                 )
             except Exception as exc:
                 QtWidgets.QMessageBox.critical(self, "Error", f"Could not read file: {exc}")
@@ -239,37 +164,14 @@ class AnalyzeTab(QtWidgets.QWidget):
         self.code_input.clear()
         self._current_file_path = None
         self.file_label.setText("No file selected")
-        self.file_label.setStyleSheet("color: #888888; font-size: 12px; margin-left: 8px;")
+        self.file_label.setStyleSheet("color: #94a3b8; font-size: 12px; margin-left: 8px;")
         old = self.results_scroll.takeWidget()
         if old:
             old.deleteLater()
         self.results_scroll.setWidget(self._make_placeholder())
 
     def _update_analyze_btn(self) -> None:
-        has_code = bool(self.code_input.toPlainText().strip())
-        if has_code:
-            self.analyze_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #0066ff;
-                    color: white;
-                    border-radius: 4px;
-                    padding: 8px 16px;
-                    font-weight: bold;
-                }
-                QPushButton:hover { background-color: #0052cc; }
-            """)
-        else:
-            self.analyze_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #cccccc;
-                    color: #666666;
-                    border-radius: 4px;
-                    padding: 8px 16px;
-                    font-weight: bold;
-                }
-                QPushButton:hover { background-color: #bbbbbb; }
-            """)
-        self.analyze_btn.setEnabled(has_code)
+        self.analyze_btn.setEnabled(bool(self.code_input.toPlainText().strip()))
 
     def _analyze_code(self) -> None:
         code = self.code_input.toPlainText()
@@ -301,7 +203,7 @@ class AnalyzeTab(QtWidgets.QWidget):
 
     def _display_results(self, bugginess: list, fix_feedback: list, code: str) -> None:
         container = QtWidgets.QWidget()
-        container.setStyleSheet("background: #f5f5f5;")
+        container.setStyleSheet("background: #f0f2f5;")
         layout = QtWidgets.QVBoxLayout(container)
         layout.setContentsMargins(12, 12, 12, 12)
         layout.setSpacing(16)
@@ -310,14 +212,7 @@ class AnalyzeTab(QtWidgets.QWidget):
         export_row = QtWidgets.QHBoxLayout()
         export_row.addStretch()
         export_btn = QtWidgets.QPushButton("  Export Report")
-        export_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #0066ff; color: white;
-                border-radius: 4px; padding: 6px 16px;
-                font-weight: bold; font-size: 12px; border: none;
-            }
-            QPushButton:hover { background-color: #0052cc; }
-        """)
+        export_btn.setObjectName("exportBtn")
         export_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         export_btn.clicked.connect(
             lambda: self._export_report(bugginess, fix_feedback, code)
@@ -361,10 +256,6 @@ class AnalyzeTab(QtWidgets.QWidget):
         """Return (card_widget, content_layout) with the section header pre-built."""
         card = QtWidgets.QWidget()
         card.setObjectName("sectionCard")
-        card.setStyleSheet(
-            "QWidget#sectionCard { background: white; border: 1px solid #e8e8e8; "
-            "border-radius: 8px; }"
-        )
         layout = QtWidgets.QVBoxLayout(card)
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(6)
@@ -407,16 +298,7 @@ class AnalyzeTab(QtWidgets.QWidget):
     ) -> QtWidgets.QWidget:
         row_widget = QtWidgets.QWidget()
         row_widget.setObjectName("fnCard")
-        if is_buggy:
-            row_widget.setStyleSheet(
-                "QWidget#fnCard { background: #fffafa; border: 1px solid #ffdddd; "
-                "border-radius: 6px; }"
-            )
-        else:
-            row_widget.setStyleSheet(
-                "QWidget#fnCard { background: #fafffa; border: 1px solid #ddeedc; "
-                "border-radius: 6px; }"
-            )
+        row_widget.setProperty("buggy", "true" if is_buggy else "false")
 
         row = QtWidgets.QHBoxLayout(row_widget)
         row.setContentsMargins(12, 8, 12, 8)
@@ -478,10 +360,6 @@ class AnalyzeTab(QtWidgets.QWidget):
     def _build_violation_card(self, v: dict) -> QtWidgets.QWidget:
         card = QtWidgets.QWidget()
         card.setObjectName("vCard")
-        card.setStyleSheet(
-            "QWidget#vCard { background: #fafafa; border: 1px solid #eeeeee; "
-            "border-radius: 4px; }"
-        )
 
         row = QtWidgets.QHBoxLayout(card)
         row.setContentsMargins(12, 10, 12, 10)
@@ -534,7 +412,7 @@ class AnalyzeTab(QtWidgets.QWidget):
 
     def _build_fixes_section(self, fix_feedback: list, bugginess: list) -> QtWidgets.QWidget:
         outer = QtWidgets.QWidget()
-        outer.setStyleSheet("background: #f5f5f5;")
+        outer.setStyleSheet("background: #f0f2f5;")
         layout = QtWidgets.QVBoxLayout(outer)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(12)
@@ -582,10 +460,6 @@ class AnalyzeTab(QtWidgets.QWidget):
     ) -> QtWidgets.QWidget:
         card = QtWidgets.QWidget()
         card.setObjectName("fixCard")
-        card.setStyleSheet(
-            "QWidget#fixCard { background: white; border: 1px solid #e0e0e0; "
-            "border-radius: 8px; }"
-        )
         layout = QtWidgets.QVBoxLayout(card)
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(10)
@@ -603,9 +477,6 @@ class AnalyzeTab(QtWidgets.QWidget):
         if feedback:
             reason_box = QtWidgets.QWidget()
             reason_box.setObjectName("reasonBox")
-            reason_box.setStyleSheet(
-                "QWidget#reasonBox { background: #f0f6ff; border-radius: 4px; }"
-            )
             rb_lay = QtWidgets.QVBoxLayout(reason_box)
             rb_lay.setContentsMargins(12, 8, 12, 8)
             rb_lay.setSpacing(4)
@@ -661,14 +532,7 @@ class AnalyzeTab(QtWidgets.QWidget):
 
         # Copy button
         copy_btn = QtWidgets.QPushButton("  Copy Fixed Code")
-        copy_btn.setStyleSheet("""
-            QPushButton {
-                background: white; border: 1px solid #cccccc;
-                border-radius: 4px; padding: 5px 12px;
-                color: #333333; font-size: 12px; font-weight: normal;
-            }
-            QPushButton:hover { background: #f5f5f5; }
-        """)
+        copy_btn.setObjectName("copyBtn")
         copy_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         _fc = fixed_code
         copy_btn.clicked.connect(
@@ -741,7 +605,9 @@ class MainWindowUI(QtWidgets.QMainWindow):
 
         self.setWindowTitle("Intelligent Code Review Assistant")
         self.setGeometry(100, 100, 960, 820)
-        self.setStyleSheet(_STYLE)
+        _qss = pathlib.Path(__file__).parent / "style.qss"
+        if _qss.exists():
+            self.setStyleSheet(_qss.read_text())
 
         self._build_ui()
         self._show_login()
@@ -759,14 +625,12 @@ class MainWindowUI(QtWidgets.QMainWindow):
 
         # ── Top bar (user info + logout) ─────────────────────────────────────
         self.top_bar = QtWidgets.QWidget()
-        self.top_bar.setStyleSheet(
-            "background-color: #ffffff; border-bottom: 1px solid #e0e0e0;"
-        )
+        self.top_bar.setObjectName("topBar")
         top_layout = QtWidgets.QHBoxLayout(self.top_bar)
         top_layout.setContentsMargins(16, 6, 16, 6)
 
         self.user_label = QtWidgets.QLabel("")
-        self.user_label.setStyleSheet("color: #555555; font-size: 12px;")
+        self.user_label.setObjectName("userLabel")
         top_layout.addWidget(self.user_label)
         top_layout.addStretch()
 

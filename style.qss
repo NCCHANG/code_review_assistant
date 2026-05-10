@@ -1,0 +1,199 @@
+/* ── Global ──────────────────────────────────────────────────────────────── */
+QMainWindow,
+QWidget#centralWidget {
+    background-color: #f0f2f5;
+}
+QLabel {
+    color: #1e293b;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+QWidget#topBar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+QLabel#userLabel {
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+QTabWidget::pane {
+    border: none;
+    background-color: #f0f2f5;
+}
+QTabBar::tab {
+    background: transparent;
+    color: #64748b;
+    padding: 10px 28px;
+    margin-right: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+}
+QTabBar::tab:selected {
+    color: #2563eb;
+    font-weight: 700;
+    border-bottom: 2px solid #2563eb;
+}
+QTabBar::tab:hover:!selected {
+    color: #334155;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+/* ── Status bar ──────────────────────────────────────────────────────────── */
+QStatusBar {
+    background-color: #ffffff;
+    color: #64748b;
+    font-size: 12px;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+QPushButton {
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-weight: 600;
+    border: none;
+    font-size: 13px;
+}
+
+QPushButton#chooseFileBtn {
+    background-color: #2563eb;
+    color: white;
+}
+QPushButton#chooseFileBtn:hover    { background-color: #1d4ed8; }
+QPushButton#chooseFileBtn:pressed  { background-color: #1e40af; }
+
+QPushButton#analyzeBtn:enabled {
+    background-color: #2563eb;
+    color: white;
+}
+QPushButton#analyzeBtn:enabled:hover   { background-color: #1d4ed8; }
+QPushButton#analyzeBtn:enabled:pressed { background-color: #1e40af; }
+QPushButton#analyzeBtn:disabled {
+    background-color: #e2e8f0;
+    color: #94a3b8;
+}
+
+QPushButton#clearBtn {
+    background-color: white;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+QPushButton#clearBtn:hover  { background-color: #f8fafc; border-color: #94a3b8; }
+
+QPushButton#logoutBtn {
+    background-color: transparent;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    font-size: 12px;
+    padding: 4px 12px;
+    font-weight: 500;
+}
+QPushButton#logoutBtn:hover { background-color: #fef2f2; }
+
+QPushButton#exportBtn {
+    background-color: #2563eb;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-weight: 600;
+    font-size: 12px;
+}
+QPushButton#exportBtn:hover   { background-color: #1d4ed8; }
+QPushButton#exportBtn:pressed { background-color: #1e40af; }
+
+QPushButton#copyBtn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 5px 14px;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 500;
+}
+QPushButton#copyBtn:hover { background: #f8fafc; border-color: #94a3b8; }
+
+/* ── Scroll area ─────────────────────────────────────────────────────────── */
+QScrollArea#resultsScroll {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f0f2f5;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+QScrollBar:vertical {
+    background: transparent;
+    width: 6px;
+    margin: 0;
+}
+QScrollBar::handle:vertical {
+    background: #cbd5e1;
+    border-radius: 3px;
+    min-height: 24px;
+}
+QScrollBar::handle:vertical:hover { background: #94a3b8; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: transparent; }
+
+QScrollBar:horizontal {
+    background: transparent;
+    height: 6px;
+    margin: 0;
+}
+QScrollBar::handle:horizontal {
+    background: #cbd5e1;
+    border-radius: 3px;
+    min-width: 24px;
+}
+QScrollBar::handle:horizontal:hover { background: #94a3b8; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal { background: transparent; }
+
+/* ── Section cards ───────────────────────────────────────────────────────── */
+QWidget#sectionCard {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+/* Function row cards — state set via Qt property "buggy" = "true"/"false" */
+QWidget#fnCard {
+    border-radius: 8px;
+}
+QWidget#fnCard[buggy="true"]  { background: #fef2f2; border: 1px solid #fecaca; }
+QWidget#fnCard[buggy="false"] { background: #f0fdf4; border: 1px solid #bbf7d0; }
+
+QWidget#vCard {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+QWidget#fixCard {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+QWidget#reasonBox {
+    background: #eff6ff;
+    border-radius: 6px;
+}
+
+/* ── Misc labels ─────────────────────────────────────────────────────────── */
+QLabel#subtitle { color: #64748b; font-size: 11px; }
+QLabel#orLabel  { color: #94a3b8; }
+
+/* ── Code input ──────────────────────────────────────────────────────────── */
+QTextEdit#codeInput {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 4px;
+    selection-background-color: #bfdbfe;
+}
+QTextEdit#codeInput:focus {
+    border: 1px solid #2563eb;
+}
