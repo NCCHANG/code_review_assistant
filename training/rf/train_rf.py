@@ -34,6 +34,7 @@ DATA_DIR = os.path.join(SCRIPT_DIR, "data")
 MODELS_DIR = os.path.join(SCRIPT_DIR, "models")
 TRAIN_FILE = os.path.join(DATA_DIR, "train.csv")
 TEST_FILE = os.path.join(DATA_DIR, "test.csv")
+T5_AUGMENT_FILE = os.path.join(DATA_DIR, "t5_augment.csv")
 MODEL_PATH = os.path.join(MODELS_DIR, "rf_classifier.joblib")
 VECTORIZER_PATH = os.path.join(MODELS_DIR, "tfidf_vectorizer.joblib")
 
@@ -41,13 +42,25 @@ LABEL_NAMES = ["Clean", "Wrong Binary Operator", "Variable Misuse", "Swapped Ope
 
 
 def load_data():
-    """Load train and test CSVs, exiting early if either is missing."""
+    """Load train and test CSVs, merging T5 augmentation data when available."""
     for path in (TRAIN_FILE, TEST_FILE):
         if not os.path.exists(path):
             print(f"Error: {path} not found. Run split_dataset.py first.")
             sys.exit(1)
     train = pd.read_csv(TRAIN_FILE)
     test = pd.read_csv(TEST_FILE)
+
+    if os.path.exists(T5_AUGMENT_FILE):
+        t5_aug = pd.read_csv(T5_AUGMENT_FILE)
+        # Keep only the columns LightGBM training uses
+        t5_aug = t5_aug[["function", "label"]].dropna()
+        before = len(train)
+        train = pd.concat([train, t5_aug], ignore_index=True)
+        print(f"T5 augment: added {len(t5_aug):,} rows (cubert {before:,} + t5 {len(t5_aug):,} = {len(train):,})")
+    else:
+        print(f"Note: {T5_AUGMENT_FILE} not found — training on CuBERT only.")
+        print("      Run prepare_t5_for_lgbm.py to add T5 bug patterns to the gate.")
+
     print(f"Train: {len(train):,} samples | Test: {len(test):,} samples")
     return train, test
 
