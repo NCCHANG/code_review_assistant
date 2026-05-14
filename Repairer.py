@@ -45,18 +45,71 @@ class Repairer:
             print(f"Error loading model: {e}")
             sys.exit(1)
     
-    def fix(self, buggy_code: str, ):
-        input_text = buggy_code
-        
-        # Tokenize
-        inputs = self.tokenizer(input_text, return_tensors="pt").input_ids
-        
-        # Generate
-        outputs = self.model.generate(inputs, max_length=128)
-        
-        # Decode
-        fixed_code = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return fixed_code
+    def _extract_body_snippet(self, code: str) -> tuple[str, str, str]:
+        """Return (prefix, snippet, suffix) where snippet is the function body.
+
+        T5 was trained on short body snippets, not full function definitions.
+        Sending the full function floods the context with the signature and
+        docstring, degrading output quality. We strip those and send only the
+        body, then reconstruct the full function around T5's fix.
+        """
+        import ast as _ast
+        try:
+            tree = _ast.parse(code)
+        except SyntaxError:
+            return "", code, ""
+
+        for node in _ast.walk(tree):
+            if isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
+                lines = code.splitlines()
+                # body starts after the def line (and any docstring)
+                body_start = node.body[0].lineno - 1
+                # skip docstring if first statement is a string constant
+                if (isinstance(node.body[0], _ast.Expr) and
+                        isinstance(node.body[0].value, _ast.Constant) and
+                        isinstance(node.body[0].value.value, str)):
+                    body_start = node.body[1].lineno - 1 if len(node.body) > 1 else body_start
+                prefix = "\n".join(lines[:body_start])
+                snippet = "\n".join(lines[body_start:])
+                return prefix + "\n", snippet, ""
+
+        return "", code, ""
+
+    def fix(self, buggy_code: str) -> str:
+        prefix, snippet, _ = self._extract_body_snippet(buggy_code)
+
+        inputs = self.tokenizer(
+            snippet,
+            return_tensors="pt",
+            max_length=256,
+            truncation=True,
+        ).input_ids
+
+        outputs = self.model.generate(
+            inputs,
+            max_length=128,
+            num_beams=4,
+            early_stopping=True,
+        )
+
+        fixed_snippet = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        # Reconstruct the full function: original signature + fixed body.
+        # T5 sometimes drops leading indentation; restore it from the original
+        # body's first non-empty line so the output stays valid Python.
+        if prefix and snippet:
+            orig_indent = ""
+            for line in snippet.splitlines():
+                if line.strip():
+                    orig_indent = line[: len(line) - len(line.lstrip())]
+                    break
+            if orig_indent and not fixed_snippet.startswith(orig_indent):
+                fixed_snippet = "\n".join(
+                    orig_indent + ln if ln.strip() else ln
+                    for ln in fixed_snippet.splitlines()
+                )
+            return prefix + fixed_snippet
+        return fixed_snippet
     
     def generate_feedback(self, buggy_code: str, fixed_code: str):
         prompt = f"""

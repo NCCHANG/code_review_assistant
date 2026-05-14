@@ -67,6 +67,13 @@ def load_and_filter():
                 sp = obj.get("sstub_pattern", "")
                 if not sp or sp == "SINGLE_STMT":
                     continue
+                # Skip patterns where the correct value is semantically arbitrary
+                # and cannot be learned from code structure alone.
+                # CHANGE_STRING_LITERAL (31% of data): T5 cannot predict which
+                # string value is correct — adds noise, hurts learnable patterns.
+                # CHANGE_NUMERIC_LITERAL: same reason; arbitrary numeric targets.
+                if sp in ("CHANGE_STRING_LITERAL", "CHANGE_NUMERIC_LITERAL"):
+                    continue
                 if not obj.get("likely_bug"):
                     continue
 
