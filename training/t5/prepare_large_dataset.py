@@ -1,24 +1,40 @@
 """
-Generate train_50k.csv and val_5k.csv from the raw CTSSB-1M shards.
+Generate train.csv and val.csv from the raw CTSSB-1M shards,
+keeping ONLY the three structurally-deterministic bug patterns:
+
+  CHANGE_BOOLEAN_LITERAL   True <-> False swaps         (was 100% EM)
+  CHANGE_UNARY_OPERATOR    add/remove/change unary op    (was  67% EM)
+  CHANGE_BINARY_OPERATOR   +/-/*/< etc. swaps            (was  50% EM)
+
+These are the only patterns whose correct fix can be inferred from code
+structure alone — T5 achieves 74%+ EM on them combined, versus 18-20%
+on the full 22-pattern mix (where most patterns require guessing
+project-specific identifier names).
 
 Run from the project root:
     python training/t5/prepare_large_dataset.py
 
-Output files (rename to train.csv / val.csv before uploading to Colab):
-    training/t5/data/train_50k.csv
-    training/t5/data/val_5k.csv
+Outputs:
+    training/t5/data/train.csv
+    training/t5/data/val.csv
 """
 import gzip, hashlib, json, logging, os, random, sys
 from glob import glob
+from collections import Counter
 
-NUM_TRAIN = 50_000
-NUM_VAL   = 5_000
-SEED      = 42
-DATA_DIR  = "training/t5/data"
-RAW_DIR   = os.path.join(DATA_DIR, "raw/ctssb_data_1M")
-OUT_TRAIN = os.path.join(DATA_DIR, "train_50k.csv")
-OUT_VAL   = os.path.join(DATA_DIR, "val_5k.csv")
-MAX_CHARS = 600  # higher limit to accommodate context lines around the buggy line
+TARGET_PATTERNS = {
+    "CHANGE_BOOLEAN_LITERAL",
+    "CHANGE_UNARY_OPERATOR",
+    "CHANGE_BINARY_OPERATOR",
+}
+
+VAL_FRACTION = 0.15   # 15% of data goes to val
+SEED         = 42
+DATA_DIR     = "training/t5/data"
+RAW_DIR      = os.path.join(DATA_DIR, "raw/ctssb_data_1M")
+OUT_TRAIN    = os.path.join(DATA_DIR, "train.csv")
+OUT_VAL      = os.path.join(DATA_DIR, "val.csv")
+MAX_CHARS    = 400    # tighter limit: these patterns have short, clean snippets
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -37,11 +53,10 @@ def extract_from_diff(diff):
             continue
         if line.startswith("-"):
             before.append(line[1:].rstrip())
-            input_parts.append(line[1:].rstrip())  # buggy line goes into input
+            input_parts.append(line[1:].rstrip())
         elif line.startswith("+"):
-            after.append(line[1:].rstrip())         # fixed line is the target only
+            after.append(line[1:].rstrip())
         else:
-            # unified diff context line (starts with ' ')
             input_parts.append(line[1:].rstrip() if line.startswith(" ") else line.rstrip())
     return "\n".join(input_parts).strip(), "\n".join(before).strip(), "\n".join(after).strip()
 
@@ -65,14 +80,7 @@ def load_and_filter():
                     continue
 
                 sp = obj.get("sstub_pattern", "")
-                if not sp or sp == "SINGLE_STMT":
-                    continue
-                # Skip patterns where the correct value is semantically arbitrary
-                # and cannot be learned from code structure alone.
-                # CHANGE_STRING_LITERAL (31% of data): T5 cannot predict which
-                # string value is correct — adds noise, hurts learnable patterns.
-                # CHANGE_NUMERIC_LITERAL: same reason; arbitrary numeric targets.
-                if sp in ("CHANGE_STRING_LITERAL", "CHANGE_NUMERIC_LITERAL"):
+                if sp not in TARGET_PATTERNS:
                     continue
                 if not obj.get("likely_bug"):
                     continue
@@ -87,10 +95,14 @@ def load_and_filter():
                 if h in seen:
                     continue
                 seen.add(h)
-                rows.append({"input_text": input_with_context, "target_text": fixed,
-                             "sstub_pattern": sp, "_hash": h})
+                rows.append({
+                    "input_text":    input_with_context,
+                    "target_text":   fixed,
+                    "sstub_pattern": sp,
+                    "_hash":         h,
+                })
 
-    logging.info(f"Total usable rows after filtering: {len(rows)}")
+    logging.info(f"Total usable rows after filtering: {len(rows):,}")
     return rows
 
 
@@ -101,38 +113,39 @@ def write_csv(rows, path):
         w = csv.DictWriter(f, fieldnames=["input_text", "target_text", "sstub_pattern"])
         w.writeheader()
         for r in rows:
-            w.writerow({"input_text": r["input_text"],
-                        "target_text": r["target_text"],
-                        "sstub_pattern": r["sstub_pattern"]})
+            w.writerow({
+                "input_text":    r["input_text"],
+                "target_text":   r["target_text"],
+                "sstub_pattern": r["sstub_pattern"],
+            })
 
 
 def main():
     rows = load_and_filter()
+    if not rows:
+        sys.exit("No rows produced — check RAW_DIR path.")
 
     rng = random.Random(SEED)
     rng.shuffle(rows)
 
-    if len(rows) < NUM_TRAIN + NUM_VAL:
-        logging.warning(f"Only {len(rows)} rows available — taking all.")
+    n_val   = max(500, int(len(rows) * VAL_FRACTION))
+    n_train = len(rows) - n_val
 
-    train_rows = rows[:NUM_TRAIN]
-    train_hashes = {r["_hash"] for r in train_rows}
-    val_pool = [r for r in rows[NUM_TRAIN:] if r["_hash"] not in train_hashes]
-    val_rows = val_pool[:NUM_VAL]
+    train_rows = rows[:n_train]
+    val_rows   = rows[n_train:]
 
     write_csv(train_rows, OUT_TRAIN)
-    write_csv(val_rows, OUT_VAL)
+    write_csv(val_rows,   OUT_VAL)
 
-    logging.info(f"Wrote {len(train_rows)} rows -> {OUT_TRAIN}")
-    logging.info(f"Wrote {len(val_rows)} rows  -> {OUT_VAL}")
+    logging.info(f"Wrote {len(train_rows):,} train rows -> {OUT_TRAIN}")
+    logging.info(f"Wrote {len(val_rows):,}  val rows  -> {OUT_VAL}")
 
-    from collections import Counter
     dist = Counter(r["sstub_pattern"] for r in train_rows)
-    logging.info("Train distribution (top 10):")
-    for pat, n in dist.most_common(10):
-        logging.info(f"  {pat}: {n}")
+    logging.info("Train pattern distribution:")
+    for pat, n in dist.most_common():
+        logging.info(f"  {pat}: {n:,}")
 
-    logging.info("Done. Rename files to train.csv / val.csv before uploading to Colab.")
+    logging.info("Done. Upload train.csv and val.csv to Colab.")
 
 
 if __name__ == "__main__":
