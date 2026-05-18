@@ -1,21 +1,25 @@
-Accuracy: 0.6550 (65.50%)
+EVALUATION ON TEST SET
+============================================================
+/media/hxuan/1tb hdd linux/coding/fyp/code_review_assistant/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+
+Accuracy: 0.6572 (65.72%)
 
 Classification Report:
                        precision    recall  f1-score   support
 
-                Clean     0.7028    0.5243    0.6005     15707
-Wrong Binary Operator     0.7007    0.7735    0.7353      6359
-      Variable Misuse     0.5756    0.7577    0.6542      9648
-      Swapped Operand     0.6912    0.7492    0.7190      3286
+                Clean     0.6863    0.5656    0.6201     15707
+Wrong Binary Operator     0.7168    0.7476    0.7319      6359
+      Variable Misuse     0.5848    0.7131    0.6426      9648
+      Swapped Operand     0.6786    0.7556    0.7150      3286
 
-             accuracy                         0.6550     35000
-            macro avg     0.6676    0.7012    0.6773     35000
-         weighted avg     0.6662    0.6550    0.6509     35000
-
+             accuracy                         0.6572     35000
+            macro avg     0.6666    0.6955    0.6774     35000
+         weighted avg     0.6631    0.6572    0.6555     35000
 
 Confusion Matrix (rows = actual, cols = predicted):
                                        Clean Wrong Binary Operator       Variable Misuse       Swapped Operand
-                 Clean                  8235                  1546                  5330                   596
- Wrong Binary Operator                   909                  4919                    46                   485
-       Variable Misuse                  2297                    22                  7310                    19
-       Swapped Operand                   277                   533                    14                  2462
+                 Clean                  8884                  1380                  4828                   615
+ Wrong Binary Operator                  1027                  4754                    44                   534
+       Variable Misuse                  2722                    19                  6880                    27
+       Swapped Operand                   312                   479                    12                  2483
