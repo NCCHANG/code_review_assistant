@@ -1,12 +1,9 @@
 """Convert T5 training data (CTSSB-1M) into additional rows for LightGBM training.
 
-Maps each sstub_pattern to one of the four LightGBM labels so the gate model
-learns to detect the same bug types that T5 is trained to fix.
-
-Mapping rationale:
-  Label 1 – Wrong Binary Operator : wrong operator/operand in an expression
-  Label 2 – Variable Misuse       : wrong identifier, attribute, literal, or call name
-  Label 3 – Swapped Operand       : wrong argument count/order or structural addition
+T5 is now trained on only 3 structurally-deterministic patterns:
+  CHANGE_BINARY_OPERATOR  → Label 1 (Wrong Binary Operator)
+  CHANGE_UNARY_OPERATOR   → Label 1 (Wrong Binary Operator)
+  CHANGE_BOOLEAN_LITERAL  → Label 2 (Variable Misuse)
 
 Output:
     training/rf/data/t5_augment.csv   (columns: function, label, bug_type, source_task)
@@ -23,35 +20,11 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 T5_TRAIN_CSV = os.path.join(SCRIPT_DIR, "..", "t5", "data", "train.csv")
 OUT_CSV = os.path.join(SCRIPT_DIR, "data", "t5_augment.csv")
 
-# Map every CTSSB sstub_pattern to a LightGBM label (0 = Clean, never used here)
+# Only the 3 patterns T5 is now trained on
 SSTUB_TO_LABEL = {
-    # ── Label 1: Wrong Binary Operator ──────────────────────────────────────
-    "CHANGE_BINARY_OPERATOR":        1,
-    "CHANGE_BINARY_OPERAND":         1,
-    "CHANGE_UNARY_OPERATOR":         1,
-    "CHANGE_CONSTANT_TYPE":          1,
-
-    # ── Label 2: Variable Misuse ─────────────────────────────────────────────
-    "CHANGE_IDENTIFIER_USED":        2,
-    "CHANGE_ATTRIBUTE_USED":         2,
-    "WRONG_FUNCTION_NAME":           2,
-    "CHANGE_STRING_LITERAL":         2,
-    "CHANGE_NUMERIC_LITERAL":        2,
-    "CHANGE_BOOLEAN_LITERAL":        2,
-    "CHANGE_KEYWORD_ARGUMENT_USED":  2,
-    "SAME_FUNCTION_WRONG_CALLER":    2,
-    "SINGLE_TOKEN":                  2,
-    "MORE_SPECIFIC_IF":              2,
-    "LESS_SPECIFIC_IF":              2,
-
-    # ── Label 3: Swapped / Structural Operand ────────────────────────────────
-    "SAME_FUNCTION_MORE_ARGS":           3,
-    "SAME_FUNCTION_LESS_ARGS":           3,
-    "SAME_FUNCTION_SWAP_ARGS":           3,
-    "ADD_FUNCTION_AROUND_EXPRESSION":    3,
-    "ADD_METHOD_CALL":                   3,
-    "ADD_ELEMENTS_TO_ITERABLE":          3,
-    "ADD_ATTRIBUTE_ACCESS":              3,
+    "CHANGE_BINARY_OPERATOR": 1,
+    "CHANGE_UNARY_OPERATOR":  1,
+    "CHANGE_BOOLEAN_LITERAL": 2,
 }
 
 LABEL_NAMES = {
