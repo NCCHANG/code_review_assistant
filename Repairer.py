@@ -76,6 +76,8 @@ class Repairer:
         return "", code, ""
 
     def fix(self, buggy_code: str) -> str:
+        from difflib import SequenceMatcher
+
         prefix, snippet, _ = self._extract_body_snippet(buggy_code)
 
         inputs = self.tokenizer(
@@ -92,28 +94,38 @@ class Repairer:
             early_stopping=True,
         )
 
-        fixed_snippet = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        # T5 was trained to output a *single corrected line*, not the full body.
+        # Treat the decoded output as that one line, find the best-matching line
+        # in the original body (highest character-level similarity), and swap it.
+        fixed_line = self.tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
 
-        # Reconstruct the full function: original signature + fixed body.
-        # T5 sometimes drops leading indentation; restore it from the original
-        # body's first non-empty line so the output stays valid Python.
-        if prefix and snippet:
-            orig_indent = ""
-            for line in snippet.splitlines():
-                if line.strip():
-                    orig_indent = line[: len(line) - len(line.lstrip())]
-                    break
-            if orig_indent and not fixed_snippet.startswith(orig_indent):
-                fixed_snippet = "\n".join(
-                    orig_indent + ln if ln.strip() else ln
-                    for ln in fixed_snippet.splitlines()
-                )
+        body_lines = snippet.splitlines()
+        best_idx, best_score = -1, 0.0
+        for i, line in enumerate(body_lines):
+            stripped = line.strip()
+            if not stripped:
+                continue
+            score = SequenceMatcher(None, stripped, fixed_line).ratio()
+            if score > best_score:
+                best_score = score
+                best_idx = i
+
+        # Only apply the fix when there is a plausible match (>30% similarity).
+        # Below that threshold the model likely produced noise; return unchanged.
+        if best_idx >= 0 and best_score > 0.30:
+            orig_indent = len(body_lines[best_idx]) - len(body_lines[best_idx].lstrip())
+            body_lines[best_idx] = body_lines[best_idx][:orig_indent] + fixed_line
+            fixed_snippet = "\n".join(body_lines)
+        else:
+            fixed_snippet = snippet
+
+        if prefix:
             return prefix + fixed_snippet
         return fixed_snippet
     
     def generate_feedback(self, buggy_code: str, fixed_code: str):
         prompt = f"""
-        You are a Code Reviewer.
+        You are a Code Reviewer and Python expert.
         Buggy Code: {buggy_code}
         Fixed Code: {fixed_code}
         
