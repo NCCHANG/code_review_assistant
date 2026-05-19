@@ -120,10 +120,16 @@ class Repairer:
         Task:
         1. Analysis: Make a comparison between Buggy Code and Fixed Code. 1 sentence on the bug. Or if no change, say no bug found. Then no need to do reasoning if there's no bug.
         2. Reasoning: 1 or 2 sentences on the fix.
+        3. Accuracy: Rate the accuracy of the fix as High, Medium, or Low based on how well it addresses the bug. Be honest and critical in your assessment.
+        
+        Additional Instructions:
+        - Be concise and clear.
+        - The suggested fix may be incorrect; act as a reviewer and provide honest feedback on the quality of the fix.
         
         Format:
         Analysis: ...
         Reasoning: ...
+        Accuracy: [High/Medium/Low] (based on how well the fix addresses the bug)
         """
 
         try:
