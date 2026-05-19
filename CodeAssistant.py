@@ -87,10 +87,16 @@ def main():
     print("=" * 50)
 
     while True:
-        user_input = input("\nEnter Code or File Path (or 'exit') >> ")
+        user_input = input("\nEnter Code or File Path (or 'exit') >> ").strip()
         if user_input.lower() == "exit":
             break
-        code_assistant.process_file_or_input(user_input)
+        if os.path.isfile(user_input):
+            with open(user_input, "r", encoding="utf-8") as f:
+                code_content = f.read()
+            print(f"Reading file: {user_input}")
+        else:
+            code_content = user_input
+        code_assistant.process_file_or_input(code_content)
 
 
 if __name__ == "__main__":
