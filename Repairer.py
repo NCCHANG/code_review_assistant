@@ -125,7 +125,7 @@ class Repairer:
     
     def generate_feedback(self, buggy_code: str, fixed_code: str):
         prompt = f"""
-        You are a Code Reviewer and Python expert.
+        You are a Code Reviewer and Python expert. Your purpose is to explain the intent of the change from the Buggy Code to the Fixed Code. You will analyze the change, explain the reasoning behind it, and evaluate its accuracy in fixing the bug.
         Buggy Code: {buggy_code}
         Fixed Code: {fixed_code}
         
