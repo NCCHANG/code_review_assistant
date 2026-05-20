@@ -204,7 +204,7 @@ class AnalyzeTab(QtWidgets.QWidget):
 
     def _display_results(self, bugginess: list, fix_feedback: list, code: str) -> None:
         container = QtWidgets.QWidget()
-        container.setStyleSheet("background: #f0f2f5;")
+        container.setObjectName("resultsContainer")
         layout = QtWidgets.QVBoxLayout(container)
         layout.setContentsMargins(12, 12, 12, 12)
         layout.setSpacing(16)
