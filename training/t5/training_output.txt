@@ -1,46 +1,29 @@
 DATA PREPARATION
-(.venv) hxuan@hxuan-B760M-DS3H-AX-DDR4:/media/hxuan/1tb hdd linux/coding/fyp/code_review_assistant$ python training/t5/prepare_large_dataset.py
-cp "training/t5/data/train_50k.csv" "training/t5/data/train.csv"
-cp "training/t5/data/val_5k.csv"   "training/t5/data/val.csv"
-17:33:18 [INFO] Reading file-0.jsonl.gz ...
-17:33:20 [INFO] Reading file-1.jsonl.gz ...
-17:33:21 [INFO] Reading file-2.jsonl.gz ...
-17:33:22 [INFO] Reading file-3.jsonl.gz ...
-17:33:23 [INFO] Reading file-4.jsonl.gz ...
-17:33:24 [INFO] Reading file-5.jsonl.gz ...
-17:33:25 [INFO] Reading file-6.jsonl.gz ...
-17:33:27 [INFO] Reading file-7.jsonl.gz ...
-17:33:28 [INFO] Reading file-8.jsonl.gz ...
-17:33:29 [INFO] Reading file-9.jsonl.gz ...
-17:33:29 [INFO] Total usable rows after filtering: 543968
-17:33:30 [INFO] Wrote 50000 rows -> training/t5/data/train_50k.csv
-17:33:30 [INFO] Wrote 5000 rows  -> training/t5/data/val_5k.csv
-17:33:30 [INFO] Train distribution (top 10):
-17:33:30 [INFO]   CHANGE_STRING_LITERAL: 15490
-17:33:30 [INFO]   CHANGE_IDENTIFIER_USED: 5471
-17:33:30 [INFO]   CHANGE_BINARY_OPERAND: 3788
-17:33:30 [INFO]   SAME_FUNCTION_MORE_ARGS: 3298
-17:33:30 [INFO]   WRONG_FUNCTION_NAME: 3041
-17:33:30 [INFO]   CHANGE_NUMERIC_LITERAL: 2626
-17:33:30 [INFO]   ADD_FUNCTION_AROUND_EXPRESSION: 2545
-17:33:30 [INFO]   CHANGE_ATTRIBUTE_USED: 2423
-17:33:30 [INFO]   SINGLE_TOKEN: 2001
-17:33:30 [INFO]   ADD_METHOD_CALL: 1462
-17:33:30 [INFO] Done. Rename files to train.csv / val.csv before uploading to Colab.
+14:57:38 [INFO] Reading file-0.jsonl.gz ...
+14:57:39 [INFO] Reading file-1.jsonl.gz ...
+14:57:40 [INFO] Reading file-2.jsonl.gz ...
+14:57:41 [INFO] Reading file-3.jsonl.gz ...
+14:57:42 [INFO] Reading file-4.jsonl.gz ...
+14:57:43 [INFO] Reading file-5.jsonl.gz ...
+14:57:44 [INFO] Reading file-6.jsonl.gz ...
+14:57:45 [INFO] Reading file-7.jsonl.gz ...
+14:57:46 [INFO] Reading file-8.jsonl.gz ...
+14:57:47 [INFO] Reading file-9.jsonl.gz ...
+14:57:47 [INFO] Total usable rows after filtering: 18,298
+14:57:47 [INFO] Wrote 15,554 train rows -> training/t5/data/train.csv
+14:57:47 [INFO] Wrote 2,744  val rows  -> training/t5/data/val.csv
+14:57:47 [INFO] Train pattern distribution:
+14:57:47 [INFO]   CHANGE_BINARY_OPERATOR: 6,476
+14:57:47 [INFO]   CHANGE_BOOLEAN_LITERAL: 6,045
+14:57:47 [INFO]   CHANGE_UNARY_OPERATOR: 3,033
+14:57:47 [INFO] Done. Upload train.csv and val.csv to Colab.
 
 
 
 ---------------------------------------------------------------------------------------------
- 09:41:21 [INFO] Using device: cuda
-09:41:21 [INFO] Train rows: 50000 | Val rows: 5000
-09:41:21 [INFO] Sample input: logFile.write("Files=")
-    for i in range(len(files)-1):
-      logFile.write(files[i] + "." + extension + ",")
-    logFile.write(files[len(files)-1] + extension + "\n")
-    logFile.write("LM_format="  + extension + "\n")
-    [pointNumber, dim, subjectNumber] = self.LM.lmOrig.shape
-    totalLandmarks = pointNumber + len(self.LMExclusionList)
-09:41:21 [INFO] Loading tokenizer and model ...
+  05:08:23 [INFO] Using device: cuda
+05:08:23 [INFO] Train rows: 15,554 | Val rows: 2,744
+05:08:23 [INFO] Loading tokenizer and model ...
 /usr/local/lib/python3.12/dist-packages/huggingface_hub/file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
   warnings.warn(
 /usr/local/lib/python3.12/dist-packages/huggingface_hub/utils/_auth.py:94: UserWarning: 
@@ -49,270 +32,208 @@ To authenticate with the Hugging Face Hub, create a token in your settings tab (
 You will be able to reuse this secret in all of your notebooks.
 Please note that authentication is recommended but still optional to access public models or datasets.
   warnings.warn(
-tokenizer_config.json:  1.48k/? [00:00<00:00, 28.7kB/s]vocab.json:  703k/? [00:00<00:00, 11.6MB/s]merges.txt:  294k/? [00:00<00:00, 4.84MB/s]added_tokens.json: 100% 2.00/2.00 [00:00<00:00, 59.2B/s]special_tokens_map.json:  12.5k/? [00:00<00:00, 597kB/s]config.json:  1.57k/? [00:00<00:00, 47.6kB/s]pytorch_model.bin: 100% 892M/892M [00:09<00:00, 231MB/s]09:41:37 [INFO] Parameters: 222,882,048
-09:41:45 [INFO] --- EPOCH 1/10 ---
-09:41:48 [INFO] Epoch 1 | Step 0/3125 | Loss: 3.4553 | ETA: 20.9h
-09:42:52 [INFO] Epoch 1 | Step 50/3125 | Loss: 1.1881 | ETA: 11.3h
-09:43:58 [INFO] Epoch 1 | Step 100/3125 | Loss: 0.7666 | ETA: 11.4h
-09:45:04 [INFO] Epoch 1 | Step 150/3125 | Loss: 0.5444 | ETA: 11.4h
-09:46:10 [INFO] Epoch 1 | Step 200/3125 | Loss: 0.8169 | ETA: 11.3h
-09:47:15 [INFO] Epoch 1 | Step 250/3125 | Loss: 0.9101 | ETA: 11.3h
-09:48:21 [INFO] Epoch 1 | Step 300/3125 | Loss: 0.6685 | ETA: 11.3h
-09:49:27 [INFO] Epoch 1 | Step 350/3125 | Loss: 0.8185 | ETA: 11.3h
-09:50:32 [INFO] Epoch 1 | Step 400/3125 | Loss: 0.8593 | ETA: 11.3h
-09:51:38 [INFO] Epoch 1 | Step 450/3125 | Loss: 0.4765 | ETA: 11.2h
-09:52:44 [INFO] Epoch 1 | Step 500/3125 | Loss: 0.6238 | ETA: 11.2h
-09:53:49 [INFO] Epoch 1 | Step 550/3125 | Loss: 0.6010 | ETA: 11.2h
-09:54:55 [INFO] Epoch 1 | Step 600/3125 | Loss: 0.8082 | ETA: 11.2h
-09:56:01 [INFO] Epoch 1 | Step 650/3125 | Loss: 0.4816 | ETA: 11.2h
-09:57:06 [INFO] Epoch 1 | Step 700/3125 | Loss: 0.5060 | ETA: 11.1h
-09:58:12 [INFO] Epoch 1 | Step 750/3125 | Loss: 0.7941 | ETA: 11.1h
-09:59:18 [INFO] Epoch 1 | Step 800/3125 | Loss: 0.6159 | ETA: 11.1h
-10:00:23 [INFO] Epoch 1 | Step 850/3125 | Loss: 0.8532 | ETA: 11.1h
-10:01:29 [INFO] Epoch 1 | Step 900/3125 | Loss: 0.7057 | ETA: 11.1h
-10:02:35 [INFO] Epoch 1 | Step 950/3125 | Loss: 0.6709 | ETA: 11.1h
-10:03:40 [INFO] Epoch 1 | Step 1000/3125 | Loss: 0.5400 | ETA: 11.0h
-10:04:46 [INFO] Epoch 1 | Step 1050/3125 | Loss: 0.5254 | ETA: 11.0h
-10:05:52 [INFO] Epoch 1 | Step 1100/3125 | Loss: 0.6839 | ETA: 11.0h
-10:06:57 [INFO] Epoch 1 | Step 1150/3125 | Loss: 0.4507 | ETA: 11.0h
-10:08:03 [INFO] Epoch 1 | Step 1200/3125 | Loss: 0.6733 | ETA: 11.0h
-10:09:09 [INFO] Epoch 1 | Step 1250/3125 | Loss: 0.6294 | ETA: 10.9h
-10:10:14 [INFO] Epoch 1 | Step 1300/3125 | Loss: 0.6669 | ETA: 10.9h
-10:11:20 [INFO] Epoch 1 | Step 1350/3125 | Loss: 0.5324 | ETA: 10.9h
-10:12:25 [INFO] Epoch 1 | Step 1400/3125 | Loss: 0.5179 | ETA: 10.9h
-10:13:31 [INFO] Epoch 1 | Step 1450/3125 | Loss: 0.4350 | ETA: 10.9h
-10:14:37 [INFO] Epoch 1 | Step 1500/3125 | Loss: 0.3681 | ETA: 10.9h
-10:15:42 [INFO] Epoch 1 | Step 1550/3125 | Loss: 2.1547 | ETA: 10.8h
-10:16:48 [INFO] Epoch 1 | Step 1600/3125 | Loss: 0.5917 | ETA: 10.8h
-10:17:53 [INFO] Epoch 1 | Step 1650/3125 | Loss: 0.7123 | ETA: 10.8h
-10:18:59 [INFO] Epoch 1 | Step 1700/3125 | Loss: 0.5288 | ETA: 10.8h
-10:20:04 [INFO] Epoch 1 | Step 1750/3125 | Loss: 0.5991 | ETA: 10.8h
-10:21:10 [INFO] Epoch 1 | Step 1800/3125 | Loss: 0.6806 | ETA: 10.7h
-10:22:15 [INFO] Epoch 1 | Step 1850/3125 | Loss: 0.6950 | ETA: 10.7h
-10:23:21 [INFO] Epoch 1 | Step 1900/3125 | Loss: 0.3999 | ETA: 10.7h
-10:24:26 [INFO] Epoch 1 | Step 1950/3125 | Loss: 0.6414 | ETA: 10.7h
-10:25:32 [INFO] Epoch 1 | Step 2000/3125 | Loss: 0.5373 | ETA: 10.7h
-10:26:37 [INFO] Epoch 1 | Step 2050/3125 | Loss: 0.9211 | ETA: 10.6h
-10:27:43 [INFO] Epoch 1 | Step 2100/3125 | Loss: 0.5494 | ETA: 10.6h
-10:28:48 [INFO] Epoch 1 | Step 2150/3125 | Loss: 0.5102 | ETA: 10.6h
-10:29:54 [INFO] Epoch 1 | Step 2200/3125 | Loss: 0.4291 | ETA: 10.6h
-10:31:00 [INFO] Epoch 1 | Step 2250/3125 | Loss: 0.3553 | ETA: 10.6h
-10:32:05 [INFO] Epoch 1 | Step 2300/3125 | Loss: 0.4650 | ETA: 10.6h
-10:33:11 [INFO] Epoch 1 | Step 2350/3125 | Loss: 0.4392 | ETA: 10.5h
-10:34:16 [INFO] Epoch 1 | Step 2400/3125 | Loss: 0.8067 | ETA: 10.5h
-10:35:22 [INFO] Epoch 1 | Step 2450/3125 | Loss: 0.6913 | ETA: 10.5h
-10:36:28 [INFO] Epoch 1 | Step 2500/3125 | Loss: 0.3982 | ETA: 10.5h
-10:37:33 [INFO] Epoch 1 | Step 2550/3125 | Loss: 0.5020 | ETA: 10.5h
-10:38:39 [INFO] Epoch 1 | Step 2600/3125 | Loss: 0.6562 | ETA: 10.4h
-10:39:44 [INFO] Epoch 1 | Step 2650/3125 | Loss: 0.5615 | ETA: 10.4h
-10:40:50 [INFO] Epoch 1 | Step 2700/3125 | Loss: 0.6279 | ETA: 10.4h
-10:41:55 [INFO] Epoch 1 | Step 2750/3125 | Loss: 0.7666 | ETA: 10.4h
-10:43:01 [INFO] Epoch 1 | Step 2800/3125 | Loss: 0.5625 | ETA: 10.4h
-10:44:06 [INFO] Epoch 1 | Step 2850/3125 | Loss: 0.5915 | ETA: 10.4h
-10:45:12 [INFO] Epoch 1 | Step 2900/3125 | Loss: 0.4741 | ETA: 10.3h
-10:46:18 [INFO] Epoch 1 | Step 2950/3125 | Loss: 0.4878 | ETA: 10.3h
-10:47:23 [INFO] Epoch 1 | Step 3000/3125 | Loss: 0.7325 | ETA: 10.3h
-10:48:29 [INFO] Epoch 1 | Step 3050/3125 | Loss: 0.5566 | ETA: 10.3h
-10:49:34 [INFO] Epoch 1 | Step 3100/3125 | Loss: 0.6378 | ETA: 10.3h
-10:53:55 [INFO] Epoch 1 done | Train Loss: 0.6500 | Val Loss: 0.5317 | Exact Match: 11.4%
-10:54:07 [INFO] Best model saved (val_loss=0.5317)
-10:54:07 [INFO] --- EPOCH 2/10 ---
-10:54:08 [INFO] Epoch 2 | Step 0/3125 | Loss: 0.3413 | ETA: 10.9h
-10:55:14 [INFO] Epoch 2 | Step 50/3125 | Loss: 0.4878 | ETA: 10.8h
-10:56:20 [INFO] Epoch 2 | Step 100/3125 | Loss: 0.5850 | ETA: 10.8h
-10:57:25 [INFO] Epoch 2 | Step 150/3125 | Loss: 0.3399 | ETA: 10.8h
-10:58:31 [INFO] Epoch 2 | Step 200/3125 | Loss: 0.4562 | ETA: 10.7h
-10:59:36 [INFO] Epoch 2 | Step 250/3125 | Loss: 0.4243 | ETA: 10.7h
-11:00:42 [INFO] Epoch 2 | Step 300/3125 | Loss: 0.4665 | ETA: 10.7h
-11:01:47 [INFO] Epoch 2 | Step 350/3125 | Loss: 0.6513 | ETA: 10.7h
-11:02:53 [INFO] Epoch 2 | Step 400/3125 | Loss: 0.3861 | ETA: 10.6h
-11:03:58 [INFO] Epoch 2 | Step 450/3125 | Loss: 0.4573 | ETA: 10.6h
-11:05:04 [INFO] Epoch 2 | Step 500/3125 | Loss: 0.4994 | ETA: 10.6h
-11:06:09 [INFO] Epoch 2 | Step 550/3125 | Loss: 0.5830 | ETA: 10.6h
-11:07:14 [INFO] Epoch 2 | Step 600/3125 | Loss: 0.5272 | ETA: 10.5h
-11:08:20 [INFO] Epoch 2 | Step 650/3125 | Loss: 0.5768 | ETA: 10.5h
-11:09:25 [INFO] Epoch 2 | Step 700/3125 | Loss: 0.4606 | ETA: 10.5h
-11:10:31 [INFO] Epoch 2 | Step 750/3125 | Loss: 0.4265 | ETA: 10.4h
-11:11:36 [INFO] Epoch 2 | Step 800/3125 | Loss: 0.5651 | ETA: 10.4h
-11:12:42 [INFO] Epoch 2 | Step 850/3125 | Loss: 0.3488 | ETA: 10.4h
-11:13:47 [INFO] Epoch 2 | Step 900/3125 | Loss: 0.3957 | ETA: 10.4h
-11:14:53 [INFO] Epoch 2 | Step 950/3125 | Loss: 0.2023 | ETA: 10.3h
-11:15:58 [INFO] Epoch 2 | Step 1000/3125 | Loss: 0.3134 | ETA: 10.3h
-11:17:04 [INFO] Epoch 2 | Step 1050/3125 | Loss: 0.6510 | ETA: 10.3h
-11:18:09 [INFO] Epoch 2 | Step 1100/3125 | Loss: 0.4159 | ETA: 10.3h
-11:19:14 [INFO] Epoch 2 | Step 1150/3125 | Loss: 0.4767 | ETA: 10.2h
-11:20:20 [INFO] Epoch 2 | Step 1200/3125 | Loss: 0.5131 | ETA: 10.2h
-11:21:25 [INFO] Epoch 2 | Step 1250/3125 | Loss: 0.5867 | ETA: 10.2h
-11:22:31 [INFO] Epoch 2 | Step 1300/3125 | Loss: 0.3510 | ETA: 10.2h
-11:23:36 [INFO] Epoch 2 | Step 1350/3125 | Loss: 0.5895 | ETA: 10.2h
-11:24:42 [INFO] Epoch 2 | Step 1400/3125 | Loss: 0.5266 | ETA: 10.1h
-11:25:47 [INFO] Epoch 2 | Step 1450/3125 | Loss: 0.5274 | ETA: 10.1h
-11:26:53 [INFO] Epoch 2 | Step 1500/3125 | Loss: 0.4314 | ETA: 10.1h
-11:27:58 [INFO] Epoch 2 | Step 1550/3125 | Loss: 0.3232 | ETA: 10.1h
-11:29:04 [INFO] Epoch 2 | Step 1600/3125 | Loss: 0.4196 | ETA: 10.0h
-11:30:09 [INFO] Epoch 2 | Step 1650/3125 | Loss: 0.7084 | ETA: 10.0h
-11:31:15 [INFO] Epoch 2 | Step 1700/3125 | Loss: 0.3641 | ETA: 10.0h
-11:32:20 [INFO] Epoch 2 | Step 1750/3125 | Loss: 0.5170 | ETA: 10.0h
-11:33:26 [INFO] Epoch 2 | Step 1800/3125 | Loss: 0.4135 | ETA: 9.9h
-11:34:31 [INFO] Epoch 2 | Step 1850/3125 | Loss: 0.5966 | ETA: 9.9h
-11:35:36 [INFO] Epoch 2 | Step 1900/3125 | Loss: 0.5755 | ETA: 9.9h
-11:36:42 [INFO] Epoch 2 | Step 1950/3125 | Loss: 0.3857 | ETA: 9.9h
-11:37:47 [INFO] Epoch 2 | Step 2000/3125 | Loss: 0.7417 | ETA: 9.9h
-11:38:52 [INFO] Epoch 2 | Step 2050/3125 | Loss: 0.5689 | ETA: 9.8h
-11:39:58 [INFO] Epoch 2 | Step 2100/3125 | Loss: 0.4094 | ETA: 9.8h
-11:41:03 [INFO] Epoch 2 | Step 2150/3125 | Loss: 0.5268 | ETA: 9.8h
-11:42:09 [INFO] Epoch 2 | Step 2200/3125 | Loss: 0.4598 | ETA: 9.8h
-11:43:14 [INFO] Epoch 2 | Step 2250/3125 | Loss: 0.5200 | ETA: 9.7h
-11:44:20 [INFO] Epoch 2 | Step 2300/3125 | Loss: 0.6826 | ETA: 9.7h
-11:45:25 [INFO] Epoch 2 | Step 2350/3125 | Loss: 0.4324 | ETA: 9.7h
-11:46:30 [INFO] Epoch 2 | Step 2400/3125 | Loss: 0.5614 | ETA: 9.7h
-11:47:36 [INFO] Epoch 2 | Step 2450/3125 | Loss: 0.9822 | ETA: 9.7h
-11:48:41 [INFO] Epoch 2 | Step 2500/3125 | Loss: 0.5989 | ETA: 9.6h
-11:49:47 [INFO] Epoch 2 | Step 2550/3125 | Loss: 0.5575 | ETA: 9.6h
-11:50:52 [INFO] Epoch 2 | Step 2600/3125 | Loss: 0.5482 | ETA: 9.6h
-11:51:58 [INFO] Epoch 2 | Step 2650/3125 | Loss: 0.3898 | ETA: 9.6h
-11:53:03 [INFO] Epoch 2 | Step 2700/3125 | Loss: 0.6329 | ETA: 9.5h
-11:54:08 [INFO] Epoch 2 | Step 2750/3125 | Loss: 0.4402 | ETA: 9.5h
-11:55:14 [INFO] Epoch 2 | Step 2800/3125 | Loss: 0.3244 | ETA: 9.5h
-11:56:19 [INFO] Epoch 2 | Step 2850/3125 | Loss: 0.3637 | ETA: 9.5h
-11:57:25 [INFO] Epoch 2 | Step 2900/3125 | Loss: 0.8016 | ETA: 9.5h
-11:58:30 [INFO] Epoch 2 | Step 2950/3125 | Loss: 0.3718 | ETA: 9.4h
-11:59:36 [INFO] Epoch 2 | Step 3000/3125 | Loss: 0.6333 | ETA: 9.4h
-12:00:41 [INFO] Epoch 2 | Step 3050/3125 | Loss: 0.4261 | ETA: 9.4h
-12:01:47 [INFO] Epoch 2 | Step 3100/3125 | Loss: 0.5689 | ETA: 9.4h
-12:06:04 [INFO] Epoch 2 done | Train Loss: 0.4696 | Val Loss: 0.5248 | Exact Match: 11.4%
-12:06:30 [INFO] Best model saved (val_loss=0.5248)
-12:06:30 [INFO] --- EPOCH 3/10 ---
-12:06:32 [INFO] Epoch 3 | Step 0/3125 | Loss: 0.3906 | ETA: 9.6h
-12:07:38 [INFO] Epoch 3 | Step 50/3125 | Loss: 0.3168 | ETA: 9.6h
-12:08:43 [INFO] Epoch 3 | Step 100/3125 | Loss: 0.4535 | ETA: 9.6h
-12:09:49 [INFO] Epoch 3 | Step 150/3125 | Loss: 0.2124 | ETA: 9.6h
-12:10:54 [INFO] Epoch 3 | Step 200/3125 | Loss: 0.3408 | ETA: 9.6h
-12:12:00 [INFO] Epoch 3 | Step 250/3125 | Loss: 0.3199 | ETA: 9.5h
-12:13:05 [INFO] Epoch 3 | Step 300/3125 | Loss: 0.4143 | ETA: 9.5h
-12:14:11 [INFO] Epoch 3 | Step 350/3125 | Loss: 0.2831 | ETA: 9.5h
-12:15:16 [INFO] Epoch 3 | Step 400/3125 | Loss: 0.3645 | ETA: 9.5h
-12:16:22 [INFO] Epoch 3 | Step 450/3125 | Loss: 0.3841 | ETA: 9.4h
-12:17:27 [INFO] Epoch 3 | Step 500/3125 | Loss: 0.2644 | ETA: 9.4h
-12:18:33 [INFO] Epoch 3 | Step 550/3125 | Loss: 0.4441 | ETA: 9.4h
-12:19:38 [INFO] Epoch 3 | Step 600/3125 | Loss: 0.4611 | ETA: 9.4h
-12:20:44 [INFO] Epoch 3 | Step 650/3125 | Loss: 0.3642 | ETA: 9.3h
-12:21:49 [INFO] Epoch 3 | Step 700/3125 | Loss: 0.2639 | ETA: 9.3h
-12:22:55 [INFO] Epoch 3 | Step 750/3125 | Loss: 0.2896 | ETA: 9.3h
-12:24:01 [INFO] Epoch 3 | Step 800/3125 | Loss: 0.4606 | ETA: 9.3h
-12:25:06 [INFO] Epoch 3 | Step 850/3125 | Loss: 0.1943 | ETA: 9.3h
-12:26:12 [INFO] Epoch 3 | Step 900/3125 | Loss: 0.2980 | ETA: 9.2h
-12:27:18 [INFO] Epoch 3 | Step 950/3125 | Loss: 0.3991 | ETA: 9.2h
-12:28:23 [INFO] Epoch 3 | Step 1000/3125 | Loss: 0.4819 | ETA: 9.2h
-12:29:29 [INFO] Epoch 3 | Step 1050/3125 | Loss: 0.2941 | ETA: 9.2h
-12:30:34 [INFO] Epoch 3 | Step 1100/3125 | Loss: 0.2340 | ETA: 9.1h
-12:31:40 [INFO] Epoch 3 | Step 1150/3125 | Loss: 0.3004 | ETA: 9.1h
-12:32:45 [INFO] Epoch 3 | Step 1200/3125 | Loss: 0.3224 | ETA: 9.1h
-12:33:51 [INFO] Epoch 3 | Step 1250/3125 | Loss: 0.5480 | ETA: 9.1h
-12:34:56 [INFO] Epoch 3 | Step 1300/3125 | Loss: 0.3959 | ETA: 9.1h
-12:36:02 [INFO] Epoch 3 | Step 1350/3125 | Loss: 0.4211 | ETA: 9.0h
-12:37:07 [INFO] Epoch 3 | Step 1400/3125 | Loss: 0.3755 | ETA: 9.0h
-12:38:12 [INFO] Epoch 3 | Step 1450/3125 | Loss: 0.2361 | ETA: 9.0h
-12:39:18 [INFO] Epoch 3 | Step 1500/3125 | Loss: 0.2761 | ETA: 9.0h
-12:40:23 [INFO] Epoch 3 | Step 1550/3125 | Loss: 0.2385 | ETA: 8.9h
-12:41:29 [INFO] Epoch 3 | Step 1600/3125 | Loss: 0.3771 | ETA: 8.9h
-12:42:34 [INFO] Epoch 3 | Step 1650/3125 | Loss: 0.1721 | ETA: 8.9h
-12:43:40 [INFO] Epoch 3 | Step 1700/3125 | Loss: 0.3251 | ETA: 8.9h
-12:44:45 [INFO] Epoch 3 | Step 1750/3125 | Loss: 0.2719 | ETA: 8.9h
-12:45:51 [INFO] Epoch 3 | Step 1800/3125 | Loss: 0.2444 | ETA: 8.8h
-12:46:56 [INFO] Epoch 3 | Step 1850/3125 | Loss: 0.5810 | ETA: 8.8h
-12:48:02 [INFO] Epoch 3 | Step 1900/3125 | Loss: 0.3098 | ETA: 8.8h
-12:49:07 [INFO] Epoch 3 | Step 1950/3125 | Loss: 0.3439 | ETA: 8.8h
-12:50:13 [INFO] Epoch 3 | Step 2000/3125 | Loss: 0.2694 | ETA: 8.8h
-12:51:18 [INFO] Epoch 3 | Step 2050/3125 | Loss: 0.3639 | ETA: 8.7h
-12:52:24 [INFO] Epoch 3 | Step 2100/3125 | Loss: 0.2665 | ETA: 8.7h
-12:53:29 [INFO] Epoch 3 | Step 2150/3125 | Loss: 0.2697 | ETA: 8.7h
-12:54:34 [INFO] Epoch 3 | Step 2200/3125 | Loss: 0.6225 | ETA: 8.7h
-12:55:40 [INFO] Epoch 3 | Step 2250/3125 | Loss: 0.2955 | ETA: 8.6h
-12:56:45 [INFO] Epoch 3 | Step 2300/3125 | Loss: 0.2260 | ETA: 8.6h
-12:57:51 [INFO] Epoch 3 | Step 2350/3125 | Loss: 0.5178 | ETA: 8.6h
-12:58:56 [INFO] Epoch 3 | Step 2400/3125 | Loss: 0.4058 | ETA: 8.6h
-13:00:02 [INFO] Epoch 3 | Step 2450/3125 | Loss: 0.3816 | ETA: 8.6h
-13:01:07 [INFO] Epoch 3 | Step 2500/3125 | Loss: 0.3327 | ETA: 8.5h
-13:02:13 [INFO] Epoch 3 | Step 2550/3125 | Loss: 0.4049 | ETA: 8.5h
-13:03:18 [INFO] Epoch 3 | Step 2600/3125 | Loss: 0.3154 | ETA: 8.5h
-13:04:24 [INFO] Epoch 3 | Step 2650/3125 | Loss: 0.2420 | ETA: 8.5h
-13:05:29 [INFO] Epoch 3 | Step 2700/3125 | Loss: 0.4040 | ETA: 8.5h
-13:06:35 [INFO] Epoch 3 | Step 2750/3125 | Loss: 0.4455 | ETA: 8.4h
-13:07:40 [INFO] Epoch 3 | Step 2800/3125 | Loss: 0.2571 | ETA: 8.4h
-13:08:46 [INFO] Epoch 3 | Step 2850/3125 | Loss: 0.5638 | ETA: 8.4h
-13:09:51 [INFO] Epoch 3 | Step 2900/3125 | Loss: 0.3472 | ETA: 8.4h
-13:10:57 [INFO] Epoch 3 | Step 2950/3125 | Loss: 0.2931 | ETA: 8.4h
-13:12:02 [INFO] Epoch 3 | Step 3000/3125 | Loss: 0.2597 | ETA: 8.3h
-13:13:08 [INFO] Epoch 3 | Step 3050/3125 | Loss: 0.3120 | ETA: 8.3h
-13:14:13 [INFO] Epoch 3 | Step 3100/3125 | Loss: 0.2270 | ETA: 8.3h
-13:18:18 [INFO] Epoch 3 done | Train Loss: 0.3752 | Val Loss: 0.5431 | Exact Match: 13.2%
-13:18:18 [INFO] No improvement. Patience: 1/2
-13:18:18 [INFO] --- EPOCH 4/10 ---
-13:18:19 [INFO] Epoch 4 | Step 0/3125 | Loss: 0.3586 | ETA: 8.4h
-13:19:25 [INFO] Epoch 4 | Step 50/3125 | Loss: 0.2549 | ETA: 8.4h
-13:20:30 [INFO] Epoch 4 | Step 100/3125 | Loss: 0.2616 | ETA: 8.4h
-13:21:36 [INFO] Epoch 4 | Step 150/3125 | Loss: 0.5519 | ETA: 8.4h
-13:22:41 [INFO] Epoch 4 | Step 200/3125 | Loss: 0.2411 | ETA: 8.3h
-13:23:47 [INFO] Epoch 4 | Step 250/3125 | Loss: 0.1796 | ETA: 8.3h
-13:24:52 [INFO] Epoch 4 | Step 300/3125 | Loss: 0.2739 | ETA: 8.3h
-13:25:58 [INFO] Epoch 4 | Step 350/3125 | Loss: 0.2555 | ETA: 8.3h
-13:27:03 [INFO] Epoch 4 | Step 400/3125 | Loss: 0.3989 | ETA: 8.2h
-13:28:09 [INFO] Epoch 4 | Step 450/3125 | Loss: 0.6321 | ETA: 8.2h
-13:29:14 [INFO] Epoch 4 | Step 500/3125 | Loss: 0.1894 | ETA: 8.2h
-13:30:20 [INFO] Epoch 4 | Step 550/3125 | Loss: 0.4415 | ETA: 8.2h
-13:31:25 [INFO] Epoch 4 | Step 600/3125 | Loss: 0.4690 | ETA: 8.2h
-13:32:30 [INFO] Epoch 4 | Step 650/3125 | Loss: 0.2167 | ETA: 8.1h
-13:33:36 [INFO] Epoch 4 | Step 700/3125 | Loss: 0.2277 | ETA: 8.1h
-13:34:41 [INFO] Epoch 4 | Step 750/3125 | Loss: 0.2341 | ETA: 8.1h
-13:35:47 [INFO] Epoch 4 | Step 800/3125 | Loss: 0.1387 | ETA: 8.1h
-13:36:52 [INFO] Epoch 4 | Step 850/3125 | Loss: 0.2024 | ETA: 8.1h
-13:37:58 [INFO] Epoch 4 | Step 900/3125 | Loss: 0.2084 | ETA: 8.0h
-13:39:03 [INFO] Epoch 4 | Step 950/3125 | Loss: 0.2880 | ETA: 8.0h
-13:40:09 [INFO] Epoch 4 | Step 1000/3125 | Loss: 0.2384 | ETA: 8.0h
-13:41:14 [INFO] Epoch 4 | Step 1050/3125 | Loss: 0.3197 | ETA: 8.0h
-13:42:20 [INFO] Epoch 4 | Step 1100/3125 | Loss: 0.3895 | ETA: 8.0h
-13:43:25 [INFO] Epoch 4 | Step 1150/3125 | Loss: 0.3129 | ETA: 7.9h
-13:44:31 [INFO] Epoch 4 | Step 1200/3125 | Loss: 0.2964 | ETA: 7.9h
-13:45:36 [INFO] Epoch 4 | Step 1250/3125 | Loss: 0.3639 | ETA: 7.9h
-13:46:42 [INFO] Epoch 4 | Step 1300/3125 | Loss: 0.3667 | ETA: 7.9h
-13:47:47 [INFO] Epoch 4 | Step 1350/3125 | Loss: 0.4018 | ETA: 7.8h
-13:48:53 [INFO] Epoch 4 | Step 1400/3125 | Loss: 0.2753 | ETA: 7.8h
-13:49:58 [INFO] Epoch 4 | Step 1450/3125 | Loss: 0.4656 | ETA: 7.8h
-13:51:04 [INFO] Epoch 4 | Step 1500/3125 | Loss: 0.2890 | ETA: 7.8h
-13:52:09 [INFO] Epoch 4 | Step 1550/3125 | Loss: 0.1898 | ETA: 7.8h
-13:53:15 [INFO] Epoch 4 | Step 1600/3125 | Loss: 0.2655 | ETA: 7.7h
-13:54:20 [INFO] Epoch 4 | Step 1650/3125 | Loss: 0.2398 | ETA: 7.7h
-13:55:26 [INFO] Epoch 4 | Step 1700/3125 | Loss: 0.3973 | ETA: 7.7h
-13:56:31 [INFO] Epoch 4 | Step 1750/3125 | Loss: 0.3470 | ETA: 7.7h
-13:57:37 [INFO] Epoch 4 | Step 1800/3125 | Loss: 0.4044 | ETA: 7.7h
-13:58:43 [INFO] Epoch 4 | Step 1850/3125 | Loss: 0.3440 | ETA: 7.6h
-13:59:48 [INFO] Epoch 4 | Step 1900/3125 | Loss: 0.2525 | ETA: 7.6h
-14:00:54 [INFO] Epoch 4 | Step 1950/3125 | Loss: 0.3030 | ETA: 7.6h
-14:01:59 [INFO] Epoch 4 | Step 2000/3125 | Loss: 0.2631 | ETA: 7.6h
-14:03:05 [INFO] Epoch 4 | Step 2050/3125 | Loss: 0.3651 | ETA: 7.6h
-14:04:10 [INFO] Epoch 4 | Step 2100/3125 | Loss: 0.4472 | ETA: 7.5h
-14:05:16 [INFO] Epoch 4 | Step 2150/3125 | Loss: 0.6354 | ETA: 7.5h
-14:06:21 [INFO] Epoch 4 | Step 2200/3125 | Loss: 0.1902 | ETA: 7.5h
-14:07:27 [INFO] Epoch 4 | Step 2250/3125 | Loss: 0.2876 | ETA: 7.5h
-14:08:32 [INFO] Epoch 4 | Step 2300/3125 | Loss: 0.2134 | ETA: 7.5h
-14:09:38 [INFO] Epoch 4 | Step 2350/3125 | Loss: 0.2388 | ETA: 7.4h
-14:10:43 [INFO] Epoch 4 | Step 2400/3125 | Loss: 0.2443 | ETA: 7.4h
-14:11:49 [INFO] Epoch 4 | Step 2450/3125 | Loss: 0.2140 | ETA: 7.4h
-14:12:54 [INFO] Epoch 4 | Step 2500/3125 | Loss: 0.3370 | ETA: 7.4h
-14:14:00 [INFO] Epoch 4 | Step 2550/3125 | Loss: 0.2426 | ETA: 7.4h
-14:15:05 [INFO] Epoch 4 | Step 2600/3125 | Loss: 0.3736 | ETA: 7.3h
-14:16:11 [INFO] Epoch 4 | Step 2650/3125 | Loss: 0.2988 | ETA: 7.3h
-14:17:16 [INFO] Epoch 4 | Step 2700/3125 | Loss: 0.2901 | ETA: 7.3h
-14:18:22 [INFO] Epoch 4 | Step 2750/3125 | Loss: 0.1458 | ETA: 7.3h
-14:19:27 [INFO] Epoch 4 | Step 2800/3125 | Loss: 0.3130 | ETA: 7.3h
-14:20:33 [INFO] Epoch 4 | Step 2850/3125 | Loss: 0.1944 | ETA: 7.2h
-14:21:38 [INFO] Epoch 4 | Step 2900/3125 | Loss: 0.2690 | ETA: 7.2h
-14:22:44 [INFO] Epoch 4 | Step 2950/3125 | Loss: 0.5228 | ETA: 7.2h
-14:23:49 [INFO] Epoch 4 | Step 3000/3125 | Loss: 0.4688 | ETA: 7.2h
-14:24:55 [INFO] Epoch 4 | Step 3050/3125 | Loss: 0.1978 | ETA: 7.1h
-14:26:00 [INFO] Epoch 4 | Step 3100/3125 | Loss: 0.3731 | ETA: 7.1h
-14:30:04 [INFO] Epoch 4 done | Train Loss: 0.3027 | Val Loss: 0.5710 | Exact Match: 13.9%
-14:30:04 [INFO] No improvement. Patience: 2/2
-14:30:04 [INFO] Early stopping triggered.
-14:30:04 [INFO] Training complete! Best val loss: 0.5248
+tokenizer_config.json:  1.48k/? [00:00<00:00, 122kB/s]vocab.json:  703k/? [00:00<00:00, 21.6MB/s]merges.txt:  294k/? [00:00<00:00, 15.6MB/s]added_tokens.json: 100% 2.00/2.00 [00:00<00:00, 217B/s]special_tokens_map.json:  12.5k/? [00:00<00:00, 1.11MB/s]config.json:  1.57k/? [00:00<00:00, 136kB/s]pytorch_model.bin: 100% 892M/892M [00:08<00:00, 240MB/s]05:08:35 [INFO] Parameters: 222,882,048
+05:08:40 [INFO] --- EPOCH 1/10 ---
+05:08:42 [INFO] Epoch 1 | Step 0/973 | Loss: 3.1248 | ETA: 2.3h
+05:09:12 [INFO] Epoch 1 | Step 50/973 | Loss: 2.3415 | ETA: 1.7h
+05:09:44 [INFO] Epoch 1 | Step 100/973 | Loss: 0.4662 | ETA: 1.7h
+05:10:19 [INFO] Epoch 1 | Step 150/973 | Loss: 0.3115 | ETA: 1.7h
+05:11:09 [INFO]   Checkpoint saved (step 100)
+05:11:10 [INFO] Epoch 1 | Step 200/973 | Loss: 0.1882 | ETA: 2.0h
+05:11:47 [INFO] Epoch 1 | Step 250/973 | Loss: 0.1632 | ETA: 2.0h
+05:12:24 [INFO] Epoch 1 | Step 300/973 | Loss: 0.1668 | ETA: 2.0h
+05:13:00 [INFO] Epoch 1 | Step 350/973 | Loss: 0.1635 | ETA: 1.9h
+05:13:52 [INFO]   Checkpoint saved (step 200)
+05:13:53 [INFO] Epoch 1 | Step 400/973 | Loss: 0.1521 | ETA: 2.0h
+05:14:30 [INFO] Epoch 1 | Step 450/973 | Loss: 0.1228 | ETA: 2.0h
+05:15:07 [INFO] Epoch 1 | Step 500/973 | Loss: 0.2062 | ETA: 2.0h
+05:15:43 [INFO] Epoch 1 | Step 550/973 | Loss: 0.1281 | ETA: 2.0h
+05:16:32 [INFO]   Checkpoint saved (step 300)
+05:16:32 [INFO] Epoch 1 | Step 600/973 | Loss: 0.1046 | ETA: 2.0h
+05:17:10 [INFO] Epoch 1 | Step 650/973 | Loss: 0.1425 | ETA: 2.0h
+05:17:46 [INFO] Epoch 1 | Step 700/973 | Loss: 0.0768 | ETA: 2.0h
+05:18:23 [INFO] Epoch 1 | Step 750/973 | Loss: 0.1109 | ETA: 1.9h
+05:19:14 [INFO]   Checkpoint saved (step 400)
+05:19:15 [INFO] Epoch 1 | Step 800/973 | Loss: 0.0848 | ETA: 2.0h
+05:19:52 [INFO] Epoch 1 | Step 850/973 | Loss: 0.0751 | ETA: 1.9h
+05:20:29 [INFO] Epoch 1 | Step 900/973 | Loss: 0.0754 | ETA: 1.9h
+05:21:05 [INFO] Epoch 1 | Step 950/973 | Loss: 0.1903 | ETA: 1.9h
+05:22:55 [INFO] Epoch 1 done | Train Loss: 0.3842 | Val Loss: 0.1069 | Exact Match: 67.0%
+05:23:23 [INFO] Epoch checkpoint saved -> /content/drive/MyDrive/codet5_checkpoints/epoch_1.pt
+05:23:45 [INFO] Best model saved (val_loss=0.1069)
+05:23:45 [INFO] --- EPOCH 2/10 ---
+05:23:46 [INFO] Epoch 2 | Step 0/973 | Loss: 0.1142 | ETA: 2.3h
+05:24:21 [INFO]   Checkpoint saved (step 500)
+05:24:39 [INFO] Epoch 2 | Step 50/973 | Loss: 0.4746 | ETA: 2.3h
+05:25:16 [INFO] Epoch 2 | Step 100/973 | Loss: 0.0728 | ETA: 2.2h
+05:25:52 [INFO] Epoch 2 | Step 150/973 | Loss: 0.2805 | ETA: 2.2h
+05:26:29 [INFO] Epoch 2 | Step 200/973 | Loss: 0.0774 | ETA: 2.2h
+05:27:06 [INFO]   Checkpoint saved (step 600)
+05:27:22 [INFO] Epoch 2 | Step 250/973 | Loss: 0.0562 | ETA: 2.2h
+05:28:00 [INFO] Epoch 2 | Step 300/973 | Loss: 0.1596 | ETA: 2.1h
+05:28:36 [INFO] Epoch 2 | Step 350/973 | Loss: 0.0612 | ETA: 2.1h
+05:29:13 [INFO] Epoch 2 | Step 400/973 | Loss: 0.0620 | ETA: 2.1h
+05:29:51 [INFO]   Checkpoint saved (step 700)
+05:30:07 [INFO] Epoch 2 | Step 450/973 | Loss: 0.0890 | ETA: 2.1h
+05:30:46 [INFO] Epoch 2 | Step 500/973 | Loss: 0.0898 | ETA: 2.1h
+05:31:22 [INFO] Epoch 2 | Step 550/973 | Loss: 0.1285 | ETA: 2.0h
+05:31:59 [INFO] Epoch 2 | Step 600/973 | Loss: 0.0848 | ETA: 2.0h
+05:33:49 [INFO]   Checkpoint saved (step 800)
+05:34:06 [INFO] Epoch 2 | Step 650/973 | Loss: 0.0699 | ETA: 2.1h
+05:34:44 [INFO] Epoch 2 | Step 700/973 | Loss: 0.1395 | ETA: 2.1h
+05:35:20 [INFO] Epoch 2 | Step 750/973 | Loss: 0.0439 | ETA: 2.1h
+05:35:57 [INFO] Epoch 2 | Step 800/973 | Loss: 0.6752 | ETA: 2.0h
+05:37:51 [INFO]   Checkpoint saved (step 900)
+05:38:07 [INFO] Epoch 2 | Step 850/973 | Loss: 0.1764 | ETA: 2.1h
+05:38:45 [INFO] Epoch 2 | Step 900/973 | Loss: 0.0998 | ETA: 2.1h
+05:39:21 [INFO] Epoch 2 | Step 950/973 | Loss: 0.0562 | ETA: 2.1h
+05:41:39 [INFO] Epoch 2 done | Train Loss: 0.1045 | Val Loss: 0.0923 | Exact Match: 72.1%
+05:42:40 [INFO] Epoch checkpoint saved -> /content/drive/MyDrive/codet5_checkpoints/epoch_2.pt
+05:42:55 [INFO] Best model saved (val_loss=0.0923)
+05:42:55 [INFO] --- EPOCH 3/10 ---
+05:42:56 [INFO] Epoch 3 | Step 0/973 | Loss: 0.0383 | ETA: 2.3h
+05:43:34 [INFO] Epoch 3 | Step 50/973 | Loss: 0.3043 | ETA: 2.3h
+05:45:11 [INFO]   Checkpoint saved (step 1000)
+05:45:44 [INFO] Epoch 3 | Step 100/973 | Loss: 0.0619 | ETA: 2.3h
+05:46:21 [INFO] Epoch 3 | Step 150/973 | Loss: 0.0842 | ETA: 2.3h
+05:46:58 [INFO] Epoch 3 | Step 200/973 | Loss: 0.0517 | ETA: 2.3h
+05:47:35 [INFO] Epoch 3 | Step 250/973 | Loss: 0.0437 | ETA: 2.2h
+05:47:52 [INFO]   Checkpoint saved (step 1100)
+05:48:26 [INFO] Epoch 3 | Step 300/973 | Loss: 0.0810 | ETA: 2.2h
+05:49:03 [INFO] Epoch 3 | Step 350/973 | Loss: 0.0535 | ETA: 2.2h
+05:49:39 [INFO] Epoch 3 | Step 400/973 | Loss: 0.0472 | ETA: 2.1h
+05:50:16 [INFO] Epoch 3 | Step 450/973 | Loss: 0.2131 | ETA: 2.1h
+05:50:43 [INFO]   Checkpoint saved (step 1200)
+05:51:17 [INFO] Epoch 3 | Step 500/973 | Loss: 0.0370 | ETA: 2.1h
+05:51:54 [INFO] Epoch 3 | Step 550/973 | Loss: 0.0824 | ETA: 2.1h
+05:52:30 [INFO] Epoch 3 | Step 600/973 | Loss: 0.0502 | ETA: 2.1h
+05:53:07 [INFO] Epoch 3 | Step 650/973 | Loss: 0.0888 | ETA: 2.0h
+05:53:30 [INFO]   Checkpoint saved (step 1300)
+05:54:03 [INFO] Epoch 3 | Step 700/973 | Loss: 0.0397 | ETA: 2.0h
+05:54:41 [INFO] Epoch 3 | Step 750/973 | Loss: 0.0965 | ETA: 2.0h
+05:55:17 [INFO] Epoch 3 | Step 800/973 | Loss: 0.0685 | ETA: 2.0h
+05:55:54 [INFO] Epoch 3 | Step 850/973 | Loss: 0.0936 | ETA: 2.0h
+05:56:14 [INFO]   Checkpoint saved (step 1400)
+05:56:47 [INFO] Epoch 3 | Step 900/973 | Loss: 0.0535 | ETA: 1.9h
+05:57:25 [INFO] Epoch 3 | Step 950/973 | Loss: 0.0631 | ETA: 1.9h
+05:59:45 [INFO] Epoch 3 done | Train Loss: 0.0785 | Val Loss: 0.0873 | Exact Match: 76.1%
+06:01:14 [INFO] Epoch checkpoint saved -> /content/drive/MyDrive/codet5_checkpoints/epoch_3.pt
+06:01:31 [INFO] Best model saved (val_loss=0.0873)
+06:01:31 [INFO] --- EPOCH 4/10 ---
+06:01:32 [INFO] Epoch 4 | Step 0/973 | Loss: 0.0708 | ETA: 2.1h
+06:02:10 [INFO] Epoch 4 | Step 50/973 | Loss: 0.0313 | ETA: 2.0h
+06:04:04 [INFO]   Checkpoint saved (step 1500)
+06:04:16 [INFO] Epoch 4 | Step 100/973 | Loss: 0.1562 | ETA: 2.1h
+06:04:55 [INFO] Epoch 4 | Step 150/973 | Loss: 0.0711 | ETA: 2.0h
+06:05:30 [INFO] Epoch 4 | Step 200/973 | Loss: 0.0747 | ETA: 2.0h
+06:06:08 [INFO] Epoch 4 | Step 250/973 | Loss: 0.0545 | ETA: 2.0h
+06:06:44 [INFO]   Checkpoint saved (step 1600)
+06:06:56 [INFO] Epoch 4 | Step 300/973 | Loss: 0.0678 | ETA: 2.0h
+06:07:34 [INFO] Epoch 4 | Step 350/973 | Loss: 0.0795 | ETA: 1.9h
+06:08:10 [INFO] Epoch 4 | Step 400/973 | Loss: 0.0317 | ETA: 1.9h
+06:08:47 [INFO] Epoch 4 | Step 450/973 | Loss: 0.0507 | ETA: 1.9h
+06:09:25 [INFO]   Checkpoint saved (step 1700)
+06:09:37 [INFO] Epoch 4 | Step 500/973 | Loss: 0.0166 | ETA: 1.9h
+06:10:15 [INFO] Epoch 4 | Step 550/973 | Loss: 0.0428 | ETA: 1.9h
+06:10:51 [INFO] Epoch 4 | Step 600/973 | Loss: 0.0353 | ETA: 1.8h
+06:11:28 [INFO] Epoch 4 | Step 650/973 | Loss: 0.0356 | ETA: 1.8h
+06:13:25 [INFO]   Checkpoint saved (step 1800)
+06:13:37 [INFO] Epoch 4 | Step 700/973 | Loss: 0.2488 | ETA: 1.8h
+06:14:15 [INFO] Epoch 4 | Step 750/973 | Loss: 0.0351 | ETA: 1.8h
+06:14:51 [INFO] Epoch 4 | Step 800/973 | Loss: 0.0325 | ETA: 1.8h
+06:15:28 [INFO] Epoch 4 | Step 850/973 | Loss: 0.0475 | ETA: 1.8h
+06:16:07 [INFO]   Checkpoint saved (step 1900)
+06:16:19 [INFO] Epoch 4 | Step 900/973 | Loss: 0.0341 | ETA: 1.7h
+06:16:57 [INFO] Epoch 4 | Step 950/973 | Loss: 0.0217 | ETA: 1.7h
+06:19:09 [INFO] Epoch 4 done | Train Loss: 0.0623 | Val Loss: 0.0866 | Exact Match: 77.0%
+06:19:39 [INFO] Epoch checkpoint saved -> /content/drive/MyDrive/codet5_checkpoints/epoch_4.pt
+06:19:46 [INFO] Best model saved (val_loss=0.0866)
+06:19:46 [INFO] --- EPOCH 5/10 ---
+06:19:47 [INFO] Epoch 5 | Step 0/973 | Loss: 0.0364 | ETA: 1.8h
+06:20:25 [INFO] Epoch 5 | Step 50/973 | Loss: 0.0494 | ETA: 1.8h
+06:21:01 [INFO] Epoch 5 | Step 100/973 | Loss: 0.0578 | ETA: 1.7h
+06:22:26 [INFO]   Checkpoint saved (step 2000)
+06:22:55 [INFO] Epoch 5 | Step 150/973 | Loss: 0.0354 | ETA: 1.7h
+06:23:32 [INFO] Epoch 5 | Step 200/973 | Loss: 0.0246 | ETA: 1.7h
+06:24:08 [INFO] Epoch 5 | Step 250/973 | Loss: 0.0331 | ETA: 1.7h
+06:24:45 [INFO] Epoch 5 | Step 300/973 | Loss: 0.0348 | ETA: 1.7h
+06:25:39 [INFO]   Checkpoint saved (step 2100)
+06:26:08 [INFO] Epoch 5 | Step 350/973 | Loss: 0.7003 | ETA: 1.7h
+06:26:45 [INFO] Epoch 5 | Step 400/973 | Loss: 0.0222 | ETA: 1.6h
+06:27:21 [INFO] Epoch 5 | Step 450/973 | Loss: 0.0148 | ETA: 1.6h
+06:27:58 [INFO] Epoch 5 | Step 500/973 | Loss: 0.0193 | ETA: 1.6h
+06:28:25 [INFO]   Checkpoint saved (step 2200)
+06:28:54 [INFO] Epoch 5 | Step 550/973 | Loss: 0.0917 | ETA: 1.6h
+06:29:31 [INFO] Epoch 5 | Step 600/973 | Loss: 0.0383 | ETA: 1.6h
+06:30:07 [INFO] Epoch 5 | Step 650/973 | Loss: 0.0253 | ETA: 1.6h
+06:30:44 [INFO] Epoch 5 | Step 700/973 | Loss: 0.0273 | ETA: 1.5h
+06:31:16 [INFO]   Checkpoint saved (step 2300)
+06:31:45 [INFO] Epoch 5 | Step 750/973 | Loss: 0.0141 | ETA: 1.5h
+06:32:22 [INFO] Epoch 5 | Step 800/973 | Loss: 0.0168 | ETA: 1.5h
+06:32:58 [INFO] Epoch 5 | Step 850/973 | Loss: 0.0640 | ETA: 1.5h
+06:33:35 [INFO] Epoch 5 | Step 900/973 | Loss: 0.0510 | ETA: 1.5h
+06:34:01 [INFO]   Checkpoint saved (step 2400)
+06:34:29 [INFO] Epoch 5 | Step 950/973 | Loss: 0.0641 | ETA: 1.4h
+06:36:49 [INFO] Epoch 5 done | Train Loss: 0.0492 | Val Loss: 0.0888 | Exact Match: 77.6%
+06:39:13 [INFO] Epoch checkpoint saved -> /content/drive/MyDrive/codet5_checkpoints/epoch_5.pt
+06:39:13 [INFO] No improvement. Patience: 1/3
+06:39:13 [INFO] --- EPOCH 6/10 ---
+06:39:14 [INFO] Epoch 6 | Step 0/973 | Loss: 0.0325 | ETA: 1.5h
+06:39:52 [INFO] Epoch 6 | Step 50/973 | Loss: 0.1525 | ETA: 1.5h
+06:40:29 [INFO] Epoch 6 | Step 100/973 | Loss: 0.0991 | ETA: 1.5h
+06:42:14 [INFO]   Checkpoint saved (step 2500)
+06:42:22 [INFO] Epoch 6 | Step 150/973 | Loss: 0.0184 | ETA: 1.5h
+06:43:00 [INFO] Epoch 6 | Step 200/973 | Loss: 0.0151 | ETA: 1.4h
+06:43:36 [INFO] Epoch 6 | Step 250/973 | Loss: 0.0286 | ETA: 1.4h
+06:44:13 [INFO] Epoch 6 | Step 300/973 | Loss: 0.0410 | ETA: 1.4h
+06:45:45 [INFO]   Checkpoint saved (step 2600)
+06:45:52 [INFO] Epoch 6 | Step 350/973 | Loss: 0.0708 | ETA: 1.4h
+06:46:31 [INFO] Epoch 6 | Step 400/973 | Loss: 0.0316 | ETA: 1.4h
+06:47:07 [INFO] Epoch 6 | Step 450/973 | Loss: 0.0410 | ETA: 1.4h
+06:47:43 [INFO] Epoch 6 | Step 500/973 | Loss: 0.0581 | ETA: 1.3h
+06:48:52 [INFO]   Checkpoint saved (step 2700)
+06:49:00 [INFO] Epoch 6 | Step 550/973 | Loss: 0.0280 | ETA: 1.3h
+06:49:38 [INFO] Epoch 6 | Step 600/973 | Loss: 0.0277 | ETA: 1.3h
+06:50:14 [INFO] Epoch 6 | Step 650/973 | Loss: 0.0617 | ETA: 1.3h
+06:50:51 [INFO] Epoch 6 | Step 700/973 | Loss: 0.0545 | ETA: 1.3h
+06:51:35 [INFO]   Checkpoint saved (step 2800)
+06:51:42 [INFO] Epoch 6 | Step 750/973 | Loss: 0.0714 | ETA: 1.3h
+06:52:21 [INFO] Epoch 6 | Step 800/973 | Loss: 0.0421 | ETA: 1.2h
+06:52:57 [INFO] Epoch 6 | Step 850/973 | Loss: 0.0185 | ETA: 1.2h
+06:53:33 [INFO] Epoch 6 | Step 900/973 | Loss: 0.0245 | ETA: 1.2h
+06:54:21 [INFO]   Checkpoint saved (step 2900)
+06:54:29 [INFO] Epoch 6 | Step 950/973 | Loss: 0.0360 | ETA: 1.2h
+06:56:47 [INFO] Epoch 6 done | Train Loss: 0.0407 | Val Loss: 0.0921 | Exact Match: 78.4%
+06:58:39 [INFO] Epoch checkpoint saved -> /content/drive/MyDrive/codet5_checkpoints/epoch_6.pt
+06:58:39 [INFO] No improvement. Patience: 2/3
+06:58:39 [INFO] --- EPOCH 7/10 ---
+06:58:40 [INFO] Epoch 7 | Step 0/973 | Loss: 0.1410 | ETA: 1.2h
+06:59:17 [INFO] Epoch 7 | Step 50/973 | Loss: 0.0345 | ETA: 1.2h
+06:59:54 [INFO] Epoch 7 | Step 100/973 | Loss: 0.0570 | ETA: 1.2h
+07:00:31 [INFO] Epoch 7 | Step 150/973 | Loss: 0.0506 | ETA: 1.2h
+07:01:30 [INFO]   Checkpoint saved (step 3000)
+07:01:55 [INFO] Epoch 7 | Step 200/973 | Loss: 0.0770 | ETA: 1.2h
+07:02:33 [INFO] Epoch 7 | Step 250/973 | Loss: 0.1576 | ETA: 1.1h
+07:03:09 [INFO] Epoch 7 | Step 300/973 | Loss: 0.0216 | ETA: 1.1h
+07:03:46 [INFO] Epoch 7 | Step 350/973 | Loss: 0.0266 | ETA: 1.1h
+07:04:12 [INFO]   Checkpoint saved (step 3100)
+07:04:36 [INFO] Epoch 7 | Step 400/973 | Loss: 0.0659 | ETA: 1.1h
+07:05:14 [INFO] Epoch 7 | Step 450/973 | Loss: 0.0026 | ETA: 1.1h
+07:05:50 [INFO] Epoch 7 | Step 500/973 | Loss: 0.0311 | ETA: 1.0h
+07:06:27 [INFO] Epoch 7 | Step 550/973 | Loss: 0.0531 | ETA: 1.0h
+07:08:12 [INFO]   Checkpoint saved (step 3200)
+07:08:36 [INFO] Epoch 7 | Step 600/973 | Loss: 0.0058 | ETA: 1.0h
+07:09:14 [INFO] Epoch 7 | Step 650/973 | Loss: 0.0247 | ETA: 1.0h
+07:09:50 [INFO] Epoch 7 | Step 700/973 | Loss: 0.0095 | ETA: 1.0h
+07:10:27 [INFO] Epoch 7 | Step 750/973 | Loss: 0.0795 | ETA: 1.0h
+07:10:56 [INFO]   Checkpoint saved (step 3300)
+07:11:20 [INFO] Epoch 7 | Step 800/973 | Loss: 0.0115 | ETA: 1.0h
+07:11:58 [INFO] Epoch 7 | Step 850/973 | Loss: 0.0240 | ETA: 0.9h
+07:12:34 [INFO] Epoch 7 | Step 900/973 | Loss: 0.0312 | ETA: 0.9h
+07:13:11 [INFO] Epoch 7 | Step 950/973 | Loss: 0.0217 | ETA: 0.9h
+07:15:00 [INFO]   Checkpoint saved (step 3400)
+07:17:02 [INFO] Epoch 7 done | Train Loss: 0.0338 | Val Loss: 0.0941 | Exact Match: 77.2%
+07:18:59 [INFO] Epoch checkpoint saved -> /content/drive/MyDrive/codet5_checkpoints/epoch_7.pt
+07:18:59 [INFO] No improvement. Patience: 3/3
+07:18:59 [INFO] Early stopping triggered.
+07:18:59 [INFO] Training complete! Best val loss: 0.0866
